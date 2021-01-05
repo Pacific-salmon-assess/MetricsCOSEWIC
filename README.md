@@ -1,6 +1,9 @@
 # MetricsCOSEWIC
 R Package for calculating COSEWIC metrics. Initial focus is on Probability of Decline.
 
+**WARNING: This is a pre-release development version. Repo is public for testing package install in another repo. DO NOT USE YET**
+
+
 ## Background
 
 * initial version is a spin-off from a metrics package developed for status assessments under Canada's Wild Salmon policy ([WSPMetrics](https://github.com/Pacific-salmon-assess/WSP-Metrics-Pkg)).
