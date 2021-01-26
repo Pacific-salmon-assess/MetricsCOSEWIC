@@ -1,12 +1,14 @@
 Package: MetricsCOSEWIC
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Metrics for COSEWIC status assessments.
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Gottfried Pestal, Carrie Holt
+Maintainer: Gottfried Pestal <gpestal@solv.ca>
+Description: Initial focus of development is on trend and probability of decline.
+License: GNU GENERAL PUBLIC LICENSE
 Encoding: UTF-8
 LazyData: true
+Imports: dplyr, tibble, R2jags, coda, rstanarm, Rcpp, shiny, shinystan
 RoxygenNote: 7.1.1
+
+
