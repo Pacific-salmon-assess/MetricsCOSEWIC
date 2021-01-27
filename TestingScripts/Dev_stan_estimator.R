@@ -22,7 +22,7 @@ test.df <- SR_Sample %>%
             select(Year,Spn)
 test.df
 
-test.df.sub <- test.df %>% dplyr::filter(Year > calc.yr - yrs.window )
+test.df.sub <- test.df %>% dplyr::filter(Year > calc.yr - yrs.window ) %>% mutate(logSpn = log(Spn))
 test.df.sub
 
 
@@ -49,18 +49,45 @@ est.simple
 # use the MCMC jags version
 est.jags <- calcPercChangeMCMC(vec.in = log(test.df.sub$Spn),
                    model.in = NULL, # this defaults to the BUGS code in the built in function trend.bugs.1()
+                   perc.change.bm = -25,
                    out.type = "long",
                    mcmc.plots = FALSE,
                    convergence.check = FALSE # ??Conv check crashes on ts() ???
                    )
 est.jags$pchange
-
 est.jags$probdecl
-
 est.jags$summary
 
 
 
+plotPattern(yrs = test.df$Year ,vals = log(test.df$Spn),
+            width=1,color="darkblue",
+            yrs.axis=TRUE,vals.axis=TRUE,
+            vals.lim=c(10,14), hgrid=TRUE,vgrid=FALSE,
+            pch.val=19,pch.bg=NULL)
+#abline(v=c(calc.yr,calc.yr-yrs.window+1),col="red")
 
+addFit(data.df = test.df.sub, coeff = list(intercept = est.jags$summary["intercept","50%"],
+                                       slope = est.jags$summary["slope","50%"] )
+)
+
+
+
+#### Rstan version
+
+
+est.stan <- stan_lm(logSpn ~ Year, test.df.sub,
+        prior = NULL,
+        seed = 12345)
+
+names(est.stan)
+est.stan$coefficients
+est.stan$fitted.values
+est.stan$data
+
+lines(est.stan$data$Year,est.stan$fitted.values,col="red", lwd=1, lty=1)
+
+
+launch_shinystan(est.stan, ppd = FALSE)
 
 

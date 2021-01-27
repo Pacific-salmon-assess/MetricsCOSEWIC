@@ -1,16 +1,4 @@
-##############################################################################
-# function to write "Some Text" instead of a plot
-na.plot <- function(txt,xp=1.6){
-	plot(1870:2020,0:150,type="n",axes=FALSE, bty="none",xlab="",ylab="")
-	text(1945,120,txt,cex=xp,xpd=NA,adj=0.5,col="lightgrey")
-}
-
-
-
-
-
-
-#' calcPercChangeMCMC
+#' plotPattern
 #'
 #' Function to plot time series pattern with minimal labels
 #' @param yrs numeric vector of years  
@@ -24,8 +12,6 @@ na.plot <- function(txt,xp=1.6){
 #' @param vgrid if TRUE, display vertical grid lines. default is FALSE 
 #' @param pch.val numeric value for plotting character. default is 19 (solid pt)
 #' @param pch.bg  text string with color for point fill (if pch allows, e.g. 21)
-#' @param convergence.check if TRUE, do an automated convergence check
-#' @keywords MCMC, slope, trend
 #' @export
 
 
@@ -69,3 +55,29 @@ if(is.null(pch.bg)){points(yrs, vals,col=color,pch=pch.val,cex=1)} # NEW LAYOUT:
 if(!is.null(pch.bg)){points(yrs, vals,col=color,pch=pch.val,cex=1,bg=pch.bg)}
 
 }
+
+
+
+#' addFit
+#'
+#' Function to plot time series pattern with minimal labels
+#' @param data.df data frame used for the slope calculation that produced the coefficients (using the Year column here)
+#' @param coeff are the coefficients (median from posterior or MLE values)
+#' @param col line color, default is "red"
+#' @param lwd line width, default is 2
+#' @export
+
+
+addFit <- function(data.df, coeff,col = "red",lwd = 2){
+# 
+# To Do: add bounds for MCMC versions
+
+segments(min(data.df$Year), coeff$intercept ,
+         max(data.df$Year), coeff$intercept + length(data.df$Year) * coeff$slope , pch=19,col=col,lwd=lwd)
+
+
+}
+
+
+
+
