@@ -24,6 +24,14 @@ calcPercChangeMCMC <-function(vec.in,method = "jags",model.in = NULL , perc.chan
 							convergence.check = FALSE
 							){
 
+  na.flag <- sum(is.na(vec.in)) > 0  & na.skip
+  if(na.flag){	out.list <- list(pchange = NA) }
+
+
+# if no NA  (left) in input
+  if(!na.flag){
+
+  yrs.in <- 0:(length(vec.in)-1)
 
 #######################################################################################
 # JAGS
@@ -36,16 +44,7 @@ if(method == "jags"){
 if(is.null(model.in)){model.in <- trend.bugs.1}
 
 
-	na.flag <- sum(is.na(vec.in)) > 0  & na.skip
-	if(na.flag){	out.list <- list(pchange = NA) }
 
-
-	# if no NA  (left) in input
-	if(!na.flag){
-
-
-
-	yrs.in <- 0:(length(vec.in)-1)
 
 	# for details on priors, see https://github.com/SOLV-Code/WSP-Metrics-Code/issues/36
 	data.in  <- list(Yr = yrs.in ,
@@ -83,23 +82,6 @@ if(is.null(model.in)){model.in <- trend.bugs.1}
 
 
 
-		# add in % change
-		mcmc.samples <- cbind(mcmc.samples,Perc_Change = NA)
-		neg.start.idx <- mcmc.samples[,"Fit_Start"] < 0
-		mcmc.samples[,"Perc_Change"][!neg.start.idx] <- (mcmc.samples[,"Fit_End"][!neg.start.idx] - mcmc.samples[,"Fit_Start"][!neg.start.idx]) /  mcmc.samples[,"Fit_Start"][!neg.start.idx] * 100
-		mcmc.samples[,"Perc_Change"][neg.start.idx] <- (mcmc.samples[,"Fit_End"][neg.start.idx] + mcmc.samples[,"Fit_Start"][neg.start.idx]) /  abs(mcmc.samples[,"Fit_Start"][neg.start.idx]) * 100
-		# should do the same for summary table
-
-		#print(head(mcmc.samples))
-		#print(head(mcmc.summary))
-
-		pchange <- median(mcmc.samples[,"Perc_Change"])
-		probdecl <- sum(mcmc.samples[,"Perc_Change"] <= perc.change.bm) / dim(mcmc.samples)[1] *100
-
-		coda.obj1 <- as.mcmc(fit_mcmc$BUGSoutput$sims.matrix)
-		coda.obj2 <- as.mcmc(fit_mcmc) # need this alt version for the gelman plot (this one is by chain)
-
-
 
 
 	if(mcmc.plots){
@@ -128,9 +110,10 @@ if(is.null(model.in)){model.in <- trend.bugs.1}
 # slope.converged <- !any(conv.out[grepl("slope",conv.out$Check),"Flag"])
 # this version gets triggered too often, even with the increased trigger values
 
-# change it to just checking gelman-rubin < 1.1 for slope
-slope.converged <- !conv.out[conv.out$Check=="gelman.rubin.slope","Flag"]
-
+# changed it to just checking gelman-rubin < 1.1 for slope
+# old: slope.converged <- !conv.out[conv.out$Check=="gelman.rubin.slope","Flag"]
+  print(conv.out)
+  slope.converged <- conv.out[conv.out$Check=="gelman.rubin.slope",]
 
  }
 
@@ -146,21 +129,79 @@ slope.converged <- !conv.out[conv.out$Check=="gelman.rubin.slope","Flag"]
 
 
 
-	} # end if not na.flag
-
-}
 
 
+} # end if method = jags
+
+
+  #######################################################################################
+  # RSTANARM
+
+
+  if(method == "rstanarm"){
+
+
+
+
+    fit.stan <- stan_lm(vec.in ~ yrs.in,
+                        prior = NULL, # use DEFAULT
+                        seed = 12345)
+
+
+    pchange <- median(mcmc.samples[,"Perc_Change"])
+    probdecl <- sum(mcmc.samples[,"Perc_Change"] <= perc.change.bm) / dim(mcmc.samples)[1] *100
 
 
 
 
 
-	return(out.list)
+
+} # end if method = rstanarm
 
 
-}
 
+
+
+  # add in % change
+  mcmc.samples <- cbind(mcmc.samples,Perc_Change = NA)
+  neg.start.idx <- mcmc.samples[,"Fit_Start"] < 0
+  mcmc.samples[,"Perc_Change"][!neg.start.idx] <- (mcmc.samples[,"Fit_End"][!neg.start.idx] - mcmc.samples[,"Fit_Start"][!neg.start.idx]) /  mcmc.samples[,"Fit_Start"][!neg.start.idx] * 100
+  mcmc.samples[,"Perc_Change"][neg.start.idx] <- (mcmc.samples[,"Fit_End"][neg.start.idx] + mcmc.samples[,"Fit_Start"][neg.start.idx]) /  abs(mcmc.samples[,"Fit_Start"][neg.start.idx]) * 100
+  # should do the same for summary table
+
+  #print(head(mcmc.samples))
+  #print(head(mcmc.summary))
+
+  pchange <- median(mcmc.samples[,"Perc_Change"])
+  probdecl <- sum(mcmc.samples[,"Perc_Change"] <= perc.change.bm) / dim(mcmc.samples)[1] *100
+
+  coda.obj1 <- as.mcmc(fit_mcmc$BUGSoutput$sims.matrix)
+  coda.obj2 <- as.mcmc(fit_mcmc) # need this alt version for the gelman plot (this one is by chain)
+
+
+
+  out.list <- list(pchange = pchange,probdecl = probdecl)
+
+   #if(out.type=="short"){ out.list <- list(pchange = pchange,probdecl = probdecl, summary = mcmc.summary,
+                   #                                        slope.converged = slope.converged, conv.details = conv.out)}
+
+   #if(out.type=="long"){ out.list <- list(pchange = pchange,probdecl = probdecl, summary = mcmc.summary,
+       #                                      slope.converged = slope.converged, conv.details = conv.out,
+       #                                       samples = mcmc.samples,jags.out = fit_mcmc)}
+
+
+
+
+
+
+
+  } # end if not na.flag
+
+
+  	return(out.list)
+
+
+} # end calcPercChangeMCMC
 
 
 ###################################################

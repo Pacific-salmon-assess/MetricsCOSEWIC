@@ -1,6 +1,7 @@
 
 require(tidyverse)
 require(rstanarm)
+require(rstan)
 require(shinystan)
 
 library(MetricsCOSEWIC)
@@ -49,16 +50,17 @@ est.simple
 
 # use the MCMC jags version
 est.jags <- calcPercChangeMCMC(vec.in = log(test.df.sub$Spn),
+                   method = "jags",
                    model.in = NULL, # this defaults to the BUGS code in the built in function trend.bugs.1()
                    perc.change.bm = -25,
                    out.type = "long",
                    mcmc.plots = FALSE,
-                   convergence.check = FALSE # ??Conv check crashes on ts() ???
+                   convergence.check = FALSE# ??Conv check crashes on ts() ???
                    )
 est.jags$pchange
 est.jags$probdecl
 est.jags$summary
-
+est.jags$slope.converged
 
 
 plotPattern(yrs = test.df$Year ,vals = log(test.df$Spn),
@@ -85,6 +87,15 @@ names(est.stan)
 est.stan$coefficients
 est.stan$fitted.values
 est.stan$data
+
+names(est.stan$stanfit)
+est.stan$stanfit$sigma
+
+mcmc.samples.test <- As.mcmc.list(est.stan$stanfit)
+names(mcmc.samples.test)
+
+est.stan$stan_summary
+
 
 lines(est.stan$data$Year,est.stan$fitted.values,col="red", lwd=1, lty=1)
 
