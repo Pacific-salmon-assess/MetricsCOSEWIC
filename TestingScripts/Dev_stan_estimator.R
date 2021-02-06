@@ -3,6 +3,7 @@ require(tidyverse)
 require(rstanarm)
 require(shinystan)
 
+library(MetricsCOSEWIC)
 
 
 # SR_Sample is a built in data set
