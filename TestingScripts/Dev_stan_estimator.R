@@ -133,7 +133,109 @@ plotDistribution(
 
 
 
-#### RstanArm TESTING ----------------------------------------------------------------------------------------------------
+
+
+# dev: comparePercChange
+
+# pre-setup
+stk <- "Stock3"
+gen <- 4
+calc.yr <- 2017
+
+
+# inputs
+du.df <- SR_Sample %>%
+  dplyr::filter(Stock == stk) %>%
+  select(Year,Spn)
+
+yrs.window <- (3 * gen) +1
+out.type <- "short" #("short" vs. "full")
+plot.pattern <- TRUE
+plot.posteriors <- TRUE
+
+# FN CALCS
+du.df.sub <- du.df %>% dplyr::filter(Year > calc.yr - yrs.window )
+du.df.sub
+
+
+est.simple <- calcPercChangeSimple(log(test.df.sub$Spn))
+
+est.jags <- calcPercChangeMCMC(vec.in = log(test.df.sub$Spn),
+                               method = "jags",
+                               model.in = NULL, # this defaults to the BUGS code in the built in function trend.bugs.1()
+                               perc.change.bm = -25,
+                               out.type = "long",
+                               mcmc.plots = FALSE,
+                               convergence.check = FALSE# ??Conv check crashes on ts() ???
+                                )
+
+
+est.rstanarm <- calcPercChangeMCMC(vec.in = log(test.df.sub$Spn),
+                                   method = "rstanarm",
+                                   model.in = NULL, # hardwired regression model form, so no input
+                                   perc.change.bm = -25,
+                                   out.type = "long",
+                                   mcmc.plots = FALSE,
+                                   convergence.check = FALSE# NOT IMPLEMENTED YET
+)
+
+
+
+percentile.values <- c(0.025,0.25,0.5,0.75,0.975)
+percentile.labels <- c("p2.5","p25","Med","p75","p97.5","Rhat")
+extract.labels <- c("2.5%","25%","50%","75%","97.5%","Rhat")
+
+out.mat <- matrix(NA,ncol = 4, nrow=13,
+                        dimnames = list(c("MLE",paste("Jags",percentile.labels,sep="_"),  paste("RStanArm",percentile.labels,sep="_")),
+                                        c("pchange","probdecl","slope","intercept"))
+                            )
+
+out.mat["MLE",] <-round(c(est.simple$pchange,NA,est.simple$slope,est.simple$intercept),5)
+
+
+out.mat[grepl("Jags",dimnames(out.mat)[[1]]),"slope"] <- round(est.jags$summary["slope",extract.labels],5)
+out.mat[grepl("Jags",dimnames(out.mat)[[1]]),"intercept"] <- round(est.jags$summary["intercept",extract.labels],5)
+out.mat[grepl("Jags",dimnames(out.mat)[[1]]),"pchange"] <- c(quantile(est.jags$samples$Perc_Change,probs = percentile.values),NA)
+out.mat["Jags_Med","probdecl"] <- round(est.jags$probdecl,5)
+
+
+out.mat[grepl("RStanArm",dimnames(out.mat)[[1]]),"slope"] <- unlist(round(est.rstanarm$summary["slope",extract.labels],5))
+out.mat[grepl("RStanArm",dimnames(out.mat)[[1]]),"intercept"] <- unlist(round(est.rstanarm$summary["intercept",extract.labels],5))
+
+out.mat[grepl("RStanArm",dimnames(out.mat)[[1]]),"pchange"] <- c(quantile(est.rstanarm$samples$Perc_Change,probs = percentile.values),NA)
+out.mat["RStanArm_Med","probdecl"] <- round(est.rstanarm$probdecl,5)
+
+
+
+out.mat
+
+
+
+
+
+
+est.jags$summary["intercept","50%"]
+
+
+est.simple$pchange
+est.jags$pchange
+
+est.rstanarm$pchange
+est.rstanarm$probdecl
+
+
+
+
+
+est.jags$summary
+est.rstanarm$summary
+
+
+
+
+
+
+#### RstanArm PIECES TESTING ----------------------------------------------------------------------------------------------------
 
 
 est.stan <- stan_lm(logSpn ~ Year, test.df.sub,
