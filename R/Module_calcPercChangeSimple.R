@@ -17,7 +17,7 @@ calcPercChangeSimple  <- function(vec.in){
 
   if(sum(is.na(vec.use)) == 0 ){
     n<-length(vec.use)
-    yrs <- 1:n
+    yrs <- 0:(n-1) # used to be 1:n, changed for consistency with MCMC calcs
     lm.coeff <- .lm.fit(cbind(1,yrs),vec.use)$coefficients # uses model matrix that is usually created inside lm()
     #print(lm.coeff)
     pchange <- (exp(lm.coeff[1]+lm.coeff[2]*n) -  exp(lm.coeff[1]+lm.coeff[2])) / exp(lm.coeff[1]+lm.coeff[2]) *100
@@ -27,7 +27,7 @@ calcPercChangeSimple  <- function(vec.in){
   if(sum(is.na(vec.in)) >0 ){	pchange <- NA }
 
 
-out.list <- list(pchange = pchange )
+out.list <- list(pchange = pchange,intercept = lm.coeff[1],slope = lm.coeff[2] )
 
 
 return(out.list)
