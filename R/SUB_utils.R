@@ -7,6 +7,7 @@ include.dependencies <- function(){
 #' @import R2jags
 #' @import coda
 #' @import rstanarm
+#' @import rstan
 #' @import Rcpp
 #' @import shiny
 #' @import shinystan

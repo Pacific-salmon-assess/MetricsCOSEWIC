@@ -4,7 +4,7 @@
 \alias{addFit}
 \title{addFit}
 \usage{
-addFit(data.df, coeff, col = "red", lwd = 2)
+addFit(data.df, coeff, col = "red", lwd = 2, lty = 1)
 }
 \arguments{
 \item{data.df}{data frame used for the slope calculation that produced the coefficients (using the Year column here)}

@@ -6,6 +6,7 @@
 \usage{
 calcPercChangeMCMC(
   vec.in,
+  method = "jags",
   model.in = NULL,
   perc.change.bm = -25,
   na.skip = FALSE,
@@ -17,18 +18,20 @@ calcPercChangeMCMC(
 \arguments{
 \item{vec.in}{vector with numeric values}
 
-\item{model.in}{if NULL, use the BUGS code in the built in function trend.bugs.1()}
+\item{method}{either "jags" (default), "rstanarm", or "rstan". For properties and discussion of strengths/limitations, refer to the \href{https://github.com/SOLV-Code/MetricsCOSEWIC/wiki/1-Probability-of-Decline:-Estimation-Methods}{MetricsCOSEWIC wiki}.}
+
+\item{model.in}{if NULL, use the built in functions for each method: trend.bugs.1() fir jags, ETC}
 
 \item{perc.change.bm}{benchmark for Prob(Decl>BM), default = -25}
 
 \item{na.skip}{if TRUE, skip the calculations when vec.in contains any NA}
 
-\item{out.type}{"short" or "long". 
+\item{out.type}{"short" or "long".
 "short" gives summary table of posterior plus "PercChange" and "ProbDecl"
 "long" also includes the full mcmc samples and the jags output object}
 
-\item{mcmc.plots}{if true, create the standard series of MCMC diagnostic plots 
-Note that these are printed to the default device 
+\item{mcmc.plots}{if true, create the standard series of MCMC diagnostic plots
+Note that these are printed to the default device
 (i.e. need to external wrap the function call inside a pdf /dev.off call)
 To get a plot of the model fit, run this function with out.type = "long",
 and then use plot.trend.fit().}
@@ -36,7 +39,7 @@ and then use plot.trend.fit().}
 \item{convergence.check}{if TRUE, do an automated convergence check}
 }
 \description{
-MCMC version of trend metric calculation (replaces old version based on PBSModelling and Metropolis algorithm)
+MCMC version of trend metric calculation
 }
 \keyword{MCMC,}
 \keyword{slope,}

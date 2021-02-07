@@ -81,7 +81,21 @@ if(is.null(model.in)){model.in <- trend.bugs.1}
 		mcmc.summary <- fit_mcmc$BUGSoutput$summary
 
 
+		# add in % change
+		mcmc.samples <- cbind(mcmc.samples,Perc_Change = NA)
+		neg.start.idx <- mcmc.samples[,"Fit_Start"] < 0
+		mcmc.samples[,"Perc_Change"][!neg.start.idx] <- (mcmc.samples[,"Fit_End"][!neg.start.idx] - mcmc.samples[,"Fit_Start"][!neg.start.idx]) /  mcmc.samples[,"Fit_Start"][!neg.start.idx] * 100
+		mcmc.samples[,"Perc_Change"][neg.start.idx] <- (mcmc.samples[,"Fit_End"][neg.start.idx] + mcmc.samples[,"Fit_Start"][neg.start.idx]) /  abs(mcmc.samples[,"Fit_Start"][neg.start.idx]) * 100
+		# should do the same for summary table
 
+		#print(head(mcmc.samples))
+		#print(head(mcmc.summary))
+
+		pchange <- median(mcmc.samples[,"Perc_Change"])
+		probdecl <- sum(mcmc.samples[,"Perc_Change"] <= perc.change.bm) / dim(mcmc.samples)[1] *100
+
+		coda.obj1 <- as.mcmc(fit_mcmc$BUGSoutput$sims.matrix)
+		coda.obj2 <- as.mcmc(fit_mcmc) # need this alt version for the gelman plot (this one is by chain)
 
 
 	if(mcmc.plots){
@@ -124,7 +138,7 @@ if(is.null(model.in)){model.in <- trend.bugs.1}
 
 	if(out.type=="long"){ out.list <- list(pchange = pchange,probdecl = probdecl, summary = mcmc.summary,
 											slope.converged = slope.converged, conv.details = conv.out,
-											samples = mcmc.samples,jags.out = fit_mcmc)}
+											samples = mcmc.samples,fit.obj = fit_mcmc)}
 
 
 
@@ -141,54 +155,54 @@ if(is.null(model.in)){model.in <- trend.bugs.1}
   if(method == "rstanarm"){
 
 
+    stan.in <- data.frame(Year = yrs.in,Val = vec.in)
 
 
-    fit.stan <- stan_lm(vec.in ~ yrs.in,
+    fit.stan <- stan_lm(Val ~ Year, data = stan.in,
                         prior = NULL, # use DEFAULT
                         seed = 12345)
 
+    # info on extracting: https://cran.r-project.org/web/packages/rstan/vignettes/stanfit-objects.html
+    mcmc.samples <- as.data.frame(fit.stan$stanfit)
+    names(mcmc.samples)[1:2] <- c("intercept","slope")
+    mcmc.summary <- as.data.frame(fit.stan$stan_summary)
+    row.names(mcmc.summary)[1:2] <- c("intercept","slope")
+
+    print(head(mcmc.samples))
+    print(head(mcmc.summary))
+
+
+    # for consistency with jags output
+    mcmc.samples <- mcmc.samples %>%
+                     mutate(Fit_Start = intercept) %>%
+                     mutate(Fit_End = intercept + slope * length(fit.stan$fitted.values))
+
+    print(head(mcmc.samples))
+
+    # add in % change
+    mcmc.samples <- cbind(mcmc.samples,Perc_Change = NA)
+    neg.start.idx <- mcmc.samples[,"Fit_Start"] < 0
+    mcmc.samples[,"Perc_Change"][!neg.start.idx] <- (mcmc.samples[,"Fit_End"][!neg.start.idx] - mcmc.samples[,"Fit_Start"][!neg.start.idx]) /  mcmc.samples[,"Fit_Start"][!neg.start.idx] * 100
+    mcmc.samples[,"Perc_Change"][neg.start.idx] <- (mcmc.samples[,"Fit_End"][neg.start.idx] + mcmc.samples[,"Fit_Start"][neg.start.idx]) /  abs(mcmc.samples[,"Fit_Start"][neg.start.idx]) * 100
+    # should do the same for summary table
 
     pchange <- median(mcmc.samples[,"Perc_Change"])
     probdecl <- sum(mcmc.samples[,"Perc_Change"] <= perc.change.bm) / dim(mcmc.samples)[1] *100
 
+
+    if(out.type=="short"){ out.list <- list(pchange = pchange,probdecl = probdecl, summary = mcmc.summary#,
+                                            #slope.converged = slope.converged, conv.details = conv.out
+    )}
+
+    if(out.type=="long"){ out.list <- list(pchange = pchange,probdecl = probdecl, summary = mcmc.summary,
+                                           #slope.converged = slope.converged, conv.details = conv.out,
+                                           samples = mcmc.samples,fit.obj = fit.stan)}
 
 
 
 
 
 } # end if method = rstanarm
-
-
-
-
-
-  # add in % change
-  mcmc.samples <- cbind(mcmc.samples,Perc_Change = NA)
-  neg.start.idx <- mcmc.samples[,"Fit_Start"] < 0
-  mcmc.samples[,"Perc_Change"][!neg.start.idx] <- (mcmc.samples[,"Fit_End"][!neg.start.idx] - mcmc.samples[,"Fit_Start"][!neg.start.idx]) /  mcmc.samples[,"Fit_Start"][!neg.start.idx] * 100
-  mcmc.samples[,"Perc_Change"][neg.start.idx] <- (mcmc.samples[,"Fit_End"][neg.start.idx] + mcmc.samples[,"Fit_Start"][neg.start.idx]) /  abs(mcmc.samples[,"Fit_Start"][neg.start.idx]) * 100
-  # should do the same for summary table
-
-  #print(head(mcmc.samples))
-  #print(head(mcmc.summary))
-
-  pchange <- median(mcmc.samples[,"Perc_Change"])
-  probdecl <- sum(mcmc.samples[,"Perc_Change"] <= perc.change.bm) / dim(mcmc.samples)[1] *100
-
-  coda.obj1 <- as.mcmc(fit_mcmc$BUGSoutput$sims.matrix)
-  coda.obj2 <- as.mcmc(fit_mcmc) # need this alt version for the gelman plot (this one is by chain)
-
-
-
-  out.list <- list(pchange = pchange,probdecl = probdecl)
-
-   #if(out.type=="short"){ out.list <- list(pchange = pchange,probdecl = probdecl, summary = mcmc.summary,
-                   #                                        slope.converged = slope.converged, conv.details = conv.out)}
-
-   #if(out.type=="long"){ out.list <- list(pchange = pchange,probdecl = probdecl, summary = mcmc.summary,
-       #                                      slope.converged = slope.converged, conv.details = conv.out,
-       #                                       samples = mcmc.samples,jags.out = fit_mcmc)}
-
 
 
 
