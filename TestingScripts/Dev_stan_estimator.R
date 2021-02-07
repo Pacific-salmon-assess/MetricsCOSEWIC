@@ -14,7 +14,7 @@ names(SR_Sample)
 unique(SR_Sample$Stock)
 
 # Settings
-stk <- "Stock9"
+stk <- "Stock3"
 gen <- 4
 yrs.window <- (3 * gen) +1
 calc.yr <- 2017
@@ -68,7 +68,7 @@ est.jags$pchange
 est.jags$probdecl
 est.jags$summary
 est.jags$slope.converged
-
+est.jags$samples
 
 plotPattern(yrs = test.df$Year ,vals = log(test.df$Spn),
             width=1,color="darkblue",
@@ -122,6 +122,14 @@ addFit(data.df = test.df.sub, coeff = list(intercept = est.rstanarm$summary["int
 )
 
 
+
+
+plotDistribution(
+  x.lab = "Perc Change",
+  samples = list(jags = est.jags$samples$Perc_Change ,rstanarm = est.rstanarm$samples$Perc_Change   ),
+  ref.lines = list(MLE = est.simple$pchange,BM = -25),
+  plot.range = NULL #NULL #c(-90,90)
+)
 
 
 

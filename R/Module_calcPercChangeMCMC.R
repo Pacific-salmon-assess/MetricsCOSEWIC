@@ -131,6 +131,7 @@ if(is.null(model.in)){model.in <- trend.bugs.1}
 
  }
 
+	mcmc.samples <- as.data.frame(mcmc.samples)
 
 	if(out.type=="short"){ out.list <- list(pchange = pchange,probdecl = probdecl, summary = mcmc.summary,
 											slope.converged = slope.converged, conv.details = conv.out
