@@ -68,12 +68,12 @@ if(!is.null(pch.bg)){points(yrs, vals,col=color,pch=pch.val,cex=1,bg=pch.bg)}
 #' @export
 
 
-addFit <- function(data.df, coeff,col = "red",lwd = 2){
+addFit <- function(data.df, coeff,col = "red",lwd = 2,lty=1){
 # 
 # To Do: add bounds for MCMC versions
 
 segments(min(data.df$Year), coeff$intercept ,
-         max(data.df$Year), coeff$intercept + length(data.df$Year) * coeff$slope , pch=19,col=col,lwd=lwd)
+         max(data.df$Year), coeff$intercept + length(data.df$Year) * coeff$slope , col=col,lwd=lwd,lty=lty)
 
 
 }
