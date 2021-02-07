@@ -82,10 +82,17 @@ if(is.null(model.in)){model.in <- trend.bugs.1}
 
 
 		# add in % change
-		mcmc.samples <- cbind(mcmc.samples,Perc_Change = NA)
+		mcmc.samples <- cbind(mcmc.samples,Perc_Change = NA,Perc_Change_Raw = NA)
 		neg.start.idx <- mcmc.samples[,"Fit_Start"] < 0
-		mcmc.samples[,"Perc_Change"][!neg.start.idx] <- (mcmc.samples[,"Fit_End"][!neg.start.idx] - mcmc.samples[,"Fit_Start"][!neg.start.idx]) /  mcmc.samples[,"Fit_Start"][!neg.start.idx] * 100
-		mcmc.samples[,"Perc_Change"][neg.start.idx] <- (mcmc.samples[,"Fit_End"][neg.start.idx] + mcmc.samples[,"Fit_Start"][neg.start.idx]) /  abs(mcmc.samples[,"Fit_Start"][neg.start.idx]) * 100
+
+
+		mcmc.samples[,"Perc_Change_Raw"][!neg.start.idx] <- (mcmc.samples[,"Fit_End"][!neg.start.idx] - mcmc.samples[,"Fit_Start"][!neg.start.idx]) /  mcmc.samples[,"Fit_Start"][!neg.start.idx] * 100
+		mcmc.samples[,"Perc_Change_Raw"][neg.start.idx] <- (mcmc.samples[,"Fit_End"][neg.start.idx] + mcmc.samples[,"Fit_Start"][neg.start.idx]) /  abs(mcmc.samples[,"Fit_Start"][neg.start.idx]) * 100
+
+
+		mcmc.samples[,"Perc_Change"][!neg.start.idx] <- (exp(mcmc.samples[,"Fit_End"][!neg.start.idx]) - exp(mcmc.samples[,"Fit_Start"][!neg.start.idx])) /  exp(mcmc.samples[,"Fit_Start"][!neg.start.idx]) * 100
+		# NEED TO DISCUSS/CHECK THIS
+		mcmc.samples[,"Perc_Change"][neg.start.idx] <- (exp(mcmc.samples[,"Fit_End"][neg.start.idx]) + exp(mcmc.samples[,"Fit_Start"][neg.start.idx])) /  exp(abs(mcmc.samples[,"Fit_Start"][neg.start.idx])) * 100
 		# should do the same for summary table
 
 		#print(head(mcmc.samples))
@@ -93,6 +100,11 @@ if(is.null(model.in)){model.in <- trend.bugs.1}
 
 		pchange <- median(mcmc.samples[,"Perc_Change"])
 		probdecl <- sum(mcmc.samples[,"Perc_Change"] <= perc.change.bm) / dim(mcmc.samples)[1] *100
+
+		pchange.raw <- median(mcmc.samples[,"Perc_Change_Raw"])
+		probdecl.raw <- NA #sum(mcmc.samples[,"Perc_Change_Raw"] <= perc.change.bm) / dim(mcmc.samples)[1] *100 need to convert BM
+
+
 
 		coda.obj1 <- as.mcmc(fit_mcmc$BUGSoutput$sims.matrix)
 		coda.obj2 <- as.mcmc(fit_mcmc) # need this alt version for the gelman plot (this one is by chain)
@@ -181,21 +193,37 @@ if(is.null(model.in)){model.in <- trend.bugs.1}
     print(head(mcmc.samples))
 
     # add in % change
-    mcmc.samples <- cbind(mcmc.samples,Perc_Change = NA)
+    mcmc.samples <- cbind(mcmc.samples,Perc_Change = NA,Perc_Change_Raw = NA)
     neg.start.idx <- mcmc.samples[,"Fit_Start"] < 0
-    mcmc.samples[,"Perc_Change"][!neg.start.idx] <- (mcmc.samples[,"Fit_End"][!neg.start.idx] - mcmc.samples[,"Fit_Start"][!neg.start.idx]) /  mcmc.samples[,"Fit_Start"][!neg.start.idx] * 100
-    mcmc.samples[,"Perc_Change"][neg.start.idx] <- (mcmc.samples[,"Fit_End"][neg.start.idx] + mcmc.samples[,"Fit_Start"][neg.start.idx]) /  abs(mcmc.samples[,"Fit_Start"][neg.start.idx]) * 100
+
+
+    mcmc.samples[,"Perc_Change_Raw"][!neg.start.idx] <- (mcmc.samples[,"Fit_End"][!neg.start.idx] - mcmc.samples[,"Fit_Start"][!neg.start.idx]) /  mcmc.samples[,"Fit_Start"][!neg.start.idx] * 100
+    mcmc.samples[,"Perc_Change_Raw"][neg.start.idx] <- (mcmc.samples[,"Fit_End"][neg.start.idx] + mcmc.samples[,"Fit_Start"][neg.start.idx]) /  abs(mcmc.samples[,"Fit_Start"][neg.start.idx]) * 100
+
+
+    mcmc.samples[,"Perc_Change"][!neg.start.idx] <- (exp(mcmc.samples[,"Fit_End"][!neg.start.idx]) - exp(mcmc.samples[,"Fit_Start"][!neg.start.idx])) /  exp(mcmc.samples[,"Fit_Start"][!neg.start.idx]) * 100
+    # NEED TO DISCUSS/CHECK THIS
+    mcmc.samples[,"Perc_Change"][neg.start.idx] <- (exp(mcmc.samples[,"Fit_End"][neg.start.idx]) + exp(mcmc.samples[,"Fit_Start"][neg.start.idx])) /  exp(abs(mcmc.samples[,"Fit_Start"][neg.start.idx])) * 100
+
+
     # should do the same for summary table
 
     pchange <- median(mcmc.samples[,"Perc_Change"])
     probdecl <- sum(mcmc.samples[,"Perc_Change"] <= perc.change.bm) / dim(mcmc.samples)[1] *100
 
+    pchange.raw <- median(mcmc.samples[,"Perc_Change_Raw"])
+    probdecl.raw <- NA #sum(mcmc.samples[,"Perc_Change_Raw"] <= perc.change.bm) / dim(mcmc.samples)[1] *100 need to convert BM
 
-    if(out.type=="short"){ out.list <- list(pchange = pchange,probdecl = probdecl, summary = mcmc.summary#,
+
+
+    if(out.type=="short"){ out.list <- list(pchange = pchange,probdecl = probdecl,
+                                            pchange.raw = pchange.raw,probdecl.raw = probdecl.raw,
+                                            summary = mcmc.summary#,
                                             #slope.converged = slope.converged, conv.details = conv.out
     )}
 
     if(out.type=="long"){ out.list <- list(pchange = pchange,probdecl = probdecl, summary = mcmc.summary,
+                                           pchange.raw = pchange.raw,probdecl.raw = probdecl.raw,
                                            #slope.converged = slope.converged, conv.details = conv.out,
                                            samples = mcmc.samples,fit.obj = fit.stan)}
 

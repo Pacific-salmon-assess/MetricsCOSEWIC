@@ -100,6 +100,7 @@ est.rstanarm <- calcPercChangeMCMC(vec.in = log(test.df.sub$Spn),
 
 
 est.rstanarm$pchange
+est.rstanarm$pchange.raw
 est.rstanarm$probdecl
 est.rstanarm$summary
 est.rstanarm$slope.converged
@@ -209,9 +210,15 @@ out.mat["RStanArm_Med","probdecl"] <- round(est.rstanarm$probdecl,5)
 
 out.mat
 
+write.csv(out.mat,"sample_output.csv",row.names = TRUE)
 
 
-
+plotDistribution(
+  x.lab = "Perc Change",
+  samples = list(jags = est.jags$samples$Perc_Change ,rstanarm = est.rstanarm$samples$Perc_Change   ),
+  ref.lines = list(MLE = est.simple$pchange,BM = -25),
+  plot.range = c(-90,90) #NULL #c(-90,90)
+)
 
 
 est.jags$summary["intercept","50%"]
