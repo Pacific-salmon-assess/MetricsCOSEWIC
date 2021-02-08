@@ -13,7 +13,7 @@ library(MetricsCOSEWIC)
 names(SR_Sample)
 sort(unique(SR_Sample$Stock))
 length(unique(SR_Sample$Stock))
-
+head(SR_Sample)
 
 
 ###################################################################################
@@ -27,7 +27,7 @@ write.csv(data.in,"tmp.csv")
 
 window.in <- data.frame(DU = unique(data.in$DU),Window = 13)
 
-multi.out <- multiFit(data.df, window.df, plot.file =  "Test_PercChange_Plots.pdf")
+multi.out <- multiFit(data.df = data.in, window.df = window.in, plot.file =  "Test_PercChange_Plots.pdf")
 
 
 write.csv(multi.out$Output,"Test_Outputs.csv",row.names = FALSE)
