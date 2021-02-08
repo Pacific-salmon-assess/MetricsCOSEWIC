@@ -136,6 +136,8 @@ plotDistribution(
 
 
 
+
+
 # dev: comparePercChange
 
 # pre-setup
@@ -205,12 +207,17 @@ out.mat[grepl("RStanArm",dimnames(out.mat)[[1]]),"intercept"] <- unlist(round(es
 
 out.mat[grepl("RStanArm",dimnames(out.mat)[[1]]),"pchange"] <- c(quantile(est.rstanarm$samples$Perc_Change,probs = percentile.values),NA)
 out.mat["RStanArm_Med","probdecl"] <- round(est.rstanarm$probdecl,5)
-
-
-
 out.mat
-
 write.csv(out.mat,"sample_output.csv",row.names = TRUE)
+
+percchange.df <- data.frame(
+  MLE = c(NA,NA,est.simple$pchange,NA, NA),
+  Jags = quantile(est.jags$samples$Perc_Change,probs = percentile.values),
+  Stan =  quantile(est.rstanarm$samples$Perc_Change,probs = percentile.values))
+
+percchange.df
+
+
 
 
 plotDistribution(
@@ -219,6 +226,25 @@ plotDistribution(
   ref.lines = list(MLE = est.simple$pchange,BM = -25),
   plot.range = c(-90,90) #NULL #c(-90,90)
 )
+
+
+plotBoxes(box.df = percchange.df, y.lab  = "Perc Change", ref.lines = list(BM = -25), plot.range = NULL)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 est.jags$summary["intercept","50%"]
