@@ -1,5 +1,5 @@
 # MetricsCOSEWIC
-R Package for calculating COSEWIC metrics. Initial focus is on Probability of Decline.
+R Package for calculating COSEWIC metrics. Initial focus is on alternative estimates of *Percent Change* and *Probability of Decline*.
 
 **WARNING: This is a pre-release development version. Repo is public for testing package install in another repo. DO NOT USE YET**
 
