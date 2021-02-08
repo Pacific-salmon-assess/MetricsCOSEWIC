@@ -23,6 +23,8 @@ length(unique(SR_Sample$Stock))
 data.in <- SR_Sample %>% select(Stock,Year,Spn) %>% rename(DU=Stock,Abd = Spn)
 head(data.in)
 
+write.csv(data.in,"tmp.csv")
+
 window.in <- data.frame(DU = unique(data.in$DU),Window = 13)
 
 multi.out <- multiFit(data.df, window.df, plot.file =  "Test_PercChange_Plots.pdf")
