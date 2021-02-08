@@ -16,3 +16,36 @@
 #' }
 #' @source Dummy Data
 "SR_Sample"
+
+
+#' Sample Abundance Data
+#'
+#' A dataset containing abundance data (may be total abundance, or a relative index) for various Sockeye, Coho, and Chinook stocks.
+#'
+#' @format A data frame with  5 required and some optional variables:
+#' \describe{
+#'   \item{Species}{ Species}
+#'   \item{Year}{ estimate year}
+#'   \item{DU}{ DU Name}
+#'   \item{Abd}{abundance estimate}
+#'   \item{}{}
+#'   ...
+#' }
+#' @source Dummy Data
+"DU_SampleData"
+
+
+
+#' Sample Age Data
+#'
+#' A dataset containing dominant age classes for the DUs in DU_SampleData
+#'
+#' @format A data frame with 
+#' \describe{
+#'   \item{DU}{ DU Name}
+#'   \item{Avg_Gen}{Average generation time (i.e. dominant age class}
+#'   \item{}{}
+#'   ...
+#' }
+#' @source Dummy Data
+"DU_SampleAges"

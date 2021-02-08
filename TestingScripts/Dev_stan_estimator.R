@@ -10,28 +10,71 @@ library(MetricsCOSEWIC)
 
 # SR_Sample is a built in data set
 # use '?SR_Sample' for more information
+?SR_Sample
 names(SR_Sample)
 sort(unique(SR_Sample$Stock))
 length(unique(SR_Sample$Stock))
 head(SR_Sample)
 
 
+# DU_SampleData is another built in data set
+?DU_SampleData
+names(DU_SampleData)
+sort(unique(DU_SampleData$DU))
+length(unique(DU_SampleData$DU))
+head(DU_SampleData)
+
+
+
 ###################################################################################
 #  WRAPPER FUNCTION: multiFit FUNCTION
 
 
+# run it on the SR data file
+
 data.in <- SR_Sample %>% select(Stock,Year,Spn) %>% rename(DU=Stock,Abd = Spn)
 head(data.in)
 
-write.csv(data.in,"tmp.csv")
+#write.csv(data.in,"tmp.csv")
 
 window.in <- data.frame(DU = unique(data.in$DU),Window = 13)
 
-multi.out <- multiFit(data.df = data.in, window.df = window.in, plot.file =  "Test_PercChange_Plots.pdf")
+multi.out.sr <- multiFit(data.df = data.in, window.df = window.in, plot.file =  "testing_output/Test_SRData_PercChange_Plots.pdf")
 
 
-write.csv(multi.out$Output,"Test_Outputs.csv",row.names = FALSE)
-write.csv(multi.out$Summary,"Test_Summary.csv",row.names = FALSE)
+write.csv(multi.out.sr$Output,"testing_output/Test_SRData_Outputs.csv",row.names = FALSE)
+write.csv(multi.out.sr$Summary,"testing_output/Test_SRData_Summary.csv",row.names = FALSE)
+
+
+
+# run it on the DU sample data file
+
+data.in <- DU_SampleData
+head(data.in)
+
+#write.csv(data.in,"tmp.csv")
+
+window.in <- DU_SampleAges %>% mutate(Window = 3 *Avg_Gen + 1) %>% select(-Avg_Gen)
+
+multi.out.sr <- multiFit(data.df = data.in, window.df = window.in, plot.file =  "testing_output/Test_DU_Data_PercChange_Plots.pdf")
+
+write.csv(multi.out.sr$Output,"testing_output/Test_DU_Data_Outputs.csv",row.names = FALSE)
+write.csv(multi.out.sr$Summary,"testing_output/Test_DU_Data_Summary.csv",row.names = FALSE)
+
+
+# checking Ck_DU_W -> has a 0 record -> fixing with hardwired change to 0.1
+
+#ck_w <- data.in %>% dplyr::filter(DU == "Chinook_DU_W" )
+#calcPercChangeSimple(ck_w %>% select(Abd) %>% unlist %>% tail(13) %>% log())
+#plotPattern(ck_w$Year)
+# ck_w %>% mutate(Abd = recode(Abd, "0" = 0.1))
+
+#ck_ab <- data.in %>% dplyr::filter(DU == "Chinook_DU_AB" )
+#calcPercChangeSimple(ck_ab %>% select(Abd) %>% unlist %>% tail(15) %>% log())
+
+#sk_q <- data.in %>% dplyr::filter(DU == "Sockeye_DU_Q" )
+
+
 
 
 

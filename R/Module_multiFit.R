@@ -20,10 +20,22 @@ for(du.do in sort(unique(data.df$DU)) ){
 
 print(paste("starting",du.do, "--------------------------------"))
 
+
+
 layout(matrix(c(1,1,2,3),ncol=2,byrow=TRUE))
 
 df.use <- data.df %>% dplyr::filter(DU == du.do) %>%  select(Year,Abd)
 last.yr <- max(df.use$Year)
+
+
+# TEMPORARY PATCH
+# only do fits if have at least X data points and at least Y data points are >  0
+if(sum(!is.na(df.use$Abd)) > 6 ){
+  if(sum(df.use$Abd != 0,na.rm=TRUE)> 5 ){
+
+# TEMPORARY PATCH (erplace 0 b/c log transform inside of fn call below)
+df.use <- df.use  %>% mutate(Abd = recode(Abd, "0" = 0.1))
+
 
 fit.out <- comparePercChange(du.label = du.do,
                               du.df = df.use,
@@ -39,8 +51,9 @@ out.df <- rbind(out.df, cbind(DU = du.do, Year = last.yr, rownames_to_column(as.
 
 
 title(main = du.do, outer=TRUE,line=-2,col.main = "darkblue",cex.main=1.7)
+}} # end if have data
 
-}
+} # end looping through DUs
 
 
 dev.off()
