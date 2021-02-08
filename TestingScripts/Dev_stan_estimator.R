@@ -11,10 +11,68 @@ library(MetricsCOSEWIC)
 # SR_Sample is a built in data set
 # use '?SR_Sample' for more information
 names(SR_Sample)
-unique(SR_Sample$Stock)
+sort(unique(SR_Sample$Stock))
+length(unique(SR_Sample$Stock))
+
+
+
+###################################################################################
+#  WRAPPER FUNCTION: COMPARE PERC CHANGE FUNCTION
+
+
+# pre-setup
+#stk <- "Stock3"
+gen <- 4
+
+
+
+loop.start <- proc.time()
+
+
+pdf("Testing_ComparePercChangeFn.pdf",onefile=TRUE,height=8.5, width = 11)
+
+for(stk in sort(unique(SR_Sample$Stock)) ){
+
+print(paste("starting",stk, "--------------------------------"))
+
+layout(matrix(c(1,1,2,3),ncol=2,byrow=TRUE))
+
+df.use <- SR_Sample %>% dplyr::filter(Stock == stk) %>%  select(Year,Spn)
+last.yr <- max(df.use$Year)
+
+test.out <- comparePercChange(du.label = stk,
+                              du.df = SR_Sample %>% dplyr::filter(Stock == stk) %>%  select(Year,Spn),
+                              yrs.window =  (3 * gen) +1, calc.yr = last.yr,
+                              samples.out = FALSE, plot.pattern = TRUE, plot.posteriors = TRUE, plot.boxes  = TRUE)
+test.out$Summary
+title(main = stk, outer=TRUE,line=-2)
+
+}
+
+
+dev.off()
+
+warnings()
+print("total time for this set of perc change calcs")
+print(proc.time() - loop.start )
+
+
+
+
+
+
+
+#####################################################
+# TESTING INDIVIDUAL FUNCTIONS
+
+
+
+
+
+
 
 # Settings
-stk <- "Stock3"
+stk <- "Stock8"
 gen <- 4
 yrs.window <- (3 * gen) +1
 calc.yr <- 2017
@@ -138,7 +196,11 @@ plotDistribution(
 
 
 
-# dev: comparePercChange
+#######################################################
+
+## INDIVIDUAL FUNCTION EXAMPLE OF COMPARISON
+
+
 
 # pre-setup
 stk <- "Stock3"
@@ -152,9 +214,10 @@ du.df <- SR_Sample %>%
   select(Year,Spn)
 
 yrs.window <- (3 * gen) +1
-out.type <- "short" #("short" vs. "full")
+samples.out <- TRUE
 plot.pattern <- TRUE
 plot.posteriors <- TRUE
+plot.boxes  = TRUE
 
 # FN CALCS
 du.df.sub <- du.df %>% dplyr::filter(Year > calc.yr - yrs.window )
