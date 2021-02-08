@@ -23,6 +23,8 @@ length(unique(SR_Sample$Stock))
 data.in <- SR_Sample %>% select(Stock,Year,Spn) %>% rename(DU=Stock,Abd = Spn)
 head(data.in)
 
+write.csv(data.in,"tmp.csv")
+
 window.in <- data.frame(DU = unique(data.in$DU),Window = 13)
 
 multi.out <- multiFit(data.df, window.df, plot.file =  "Test_PercChange_Plots.pdf")
@@ -38,25 +40,41 @@ write.csv(multi.out$Summary,"Test_Summary.csv",row.names = FALSE)
 
 
 
-
-
-
-
 # Settings
-stk <- "Stock8"
+stk <- "Stock3"
 gen <- 4
-yrs.window <- (3 * gen) +1
+yrs.do <- (3 * gen) +1
 calc.yr <- 2017
-
 
 test.df <- SR_Sample %>%
             dplyr::filter(Stock == stk) %>%
             select(Year,Spn)
-test.df
+head(test.df)
 
-test.df.sub <- test.df %>% dplyr::filter(Year > calc.yr - yrs.window ) %>% mutate(logSpn = log(Spn))
+test.df.sub <- test.df %>% dplyr::filter(Year > calc.yr - yrs.do )
 test.df.sub
 
+
+
+fit.out <- comparePercChange(du.label = stk,
+                             du.df = test.df,
+                             yrs.window = yrs.do ,
+                             calc.yr = 2017,
+                             samples.out = TRUE,
+                             plot.pattern = TRUE,
+                             plot.posteriors = TRUE,
+                             plot.boxes  = TRUE)
+
+
+names(fit.out)
+fit.out$Summary
+
+
+
+
+
+
+###########################
 
 plotPattern(yrs = test.df$Year ,vals = log(test.df$Spn),
             width=1,color="darkblue",
