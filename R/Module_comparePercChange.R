@@ -2,20 +2,20 @@
 #'
 #' this function calculates 3 alternative versions of the Perc Change metric: 1 deterministic (MLE) and 2 Bayesian (JAGS via rjags, STAN via RStanArm)
 #' @param du.label short label for the the Designatable Unit (DU)
-#' @param du.df data frame with the DU time series for : 2 columns, first one is "Year", second the abundance. 
+#' @param du.df data frame with the DU time series for : 2 columns, first one is "Year", second the abundance.
 #' @param yrs.window number of years to use for the percent change calculation (e.g. 3 gen +1)
 #' @param calc.yr year for which the perc change is calculated
 #' @param samples.out if TRUE, include the posterior samples in the output
 #' @param plot.pattern if TRUE, create a plot of the time series with alternative slope estimates
 #' @param plot.distributions if TRUE, create a plot of the posterior distributions (kernel density plot)
 #' @param plot.boxes if TRUE, create a plot of the posterior distributions (box plots)
-#' @export 
+#' @export
 
 
 comparePercChange  <- function(du.label,du.df, yrs.window, calc.yr, samples.out = TRUE,
 plot.pattern = TRUE, plot.posteriors = TRUE, plot.boxes  = TRUE){
 
-warning("NOTE: input time series is log-transformed before slope calc, but Perc Change estimate is backtransformed")
+#warning("NOTE: input time series is log-transformed before slope calc, but Perc Change estimate is backtransformed")
 
 du.df.sub <- du.df %>% dplyr::filter(Year > calc.yr - yrs.window )
 du.df.sub
@@ -46,7 +46,7 @@ percentile.labels <- c("p2.5","p25","Med","p75","p97.5","Rhat")
 extract.labels <- c("2.5%","25%","50%","75%","97.5%","Rhat")
 
 out.mat <- matrix(NA,ncol = 4, nrow=13,
-                        dimnames = list(c("MLE",paste("Jags",percentile.labels,sep="_"),  
+                        dimnames = list(c("MLE",paste("Jags",percentile.labels,sep="_"),
 													paste("RStanArm",percentile.labels,sep="_")),
                                       c("pchange","probdecl","slope","intercept"))
                             )

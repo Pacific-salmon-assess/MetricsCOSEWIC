@@ -17,48 +17,19 @@ length(unique(SR_Sample$Stock))
 
 
 ###################################################################################
-#  WRAPPER FUNCTION: COMPARE PERC CHANGE FUNCTION
+#  WRAPPER FUNCTION: multiFit FUNCTION
 
 
-# pre-setup
-#stk <- "Stock3"
-gen <- 4
+data.in <- SR_Sample %>% select(Stock,Year,Spn) %>% rename(DU=Stock,Abd = Spn)
+head(data.in)
+
+window.in <- data.frame(DU = unique(data.in$DU),Window = 13)
+
+multi.out <- multiFit(data.df, window.df, plot.file =  "Test_PercChange_Plots.pdf")
 
 
-
-loop.start <- proc.time()
-
-
-pdf("Testing_ComparePercChangeFn.pdf",onefile=TRUE,height=8.5, width = 11)
-
-for(stk in sort(unique(SR_Sample$Stock)) ){
-
-print(paste("starting",stk, "--------------------------------"))
-
-layout(matrix(c(1,1,2,3),ncol=2,byrow=TRUE))
-
-df.use <- SR_Sample %>% dplyr::filter(Stock == stk) %>%  select(Year,Spn)
-last.yr <- max(df.use$Year)
-
-test.out <- comparePercChange(du.label = stk,
-                              du.df = SR_Sample %>% dplyr::filter(Stock == stk) %>%  select(Year,Spn),
-                              yrs.window =  (3 * gen) +1, calc.yr = last.yr,
-                              samples.out = FALSE, plot.pattern = TRUE, plot.posteriors = TRUE, plot.boxes  = TRUE)
-test.out$Summary
-title(main = stk, outer=TRUE,line=-2)
-
-}
-
-
-dev.off()
-
-warnings()
-print("total time for this set of perc change calcs")
-print(proc.time() - loop.start )
-
-
-
-
+write.csv(multi.out$Output,"Test_Outputs.csv",row.names = FALSE)
+write.csv(multi.out$Summary,"Test_Summary.csv",row.names = FALSE)
 
 
 
