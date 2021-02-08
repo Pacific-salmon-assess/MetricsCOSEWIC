@@ -48,15 +48,14 @@ Using the built in data set, the function call looks like this:
 
 ```
 data.in <- SR_Sample %>% select(Stock,Year,Spn) %>% rename(DU=Stock,Abd = Spn)
+head(data.in)
 
+write.csv(data.in,"tmp.csv")
 
 window.in <- data.frame(DU = unique(data.in$DU),Window = 13)
-# this assumes that all DUs have a 4yr avg generation, and calculates Perc Change over 3 gen +1
 
-multi.out <- multiFit(data.df, window.df, plot.file =  "Test_PercChange_Plots.pdf")
+multi.out <- multiFit(data.df = data.in, window.df = window.in, plot.file =  "Test_PercChange_Plots.pdf")
 
-multi.out$Summary
-head(multi.out$Output)
 
 write.csv(multi.out$Output,"Test_Outputs.csv",row.names = FALSE)
 write.csv(multi.out$Summary,"Test_Summary.csv",row.names = FALSE)
