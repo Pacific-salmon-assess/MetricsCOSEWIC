@@ -32,7 +32,7 @@ library(MetricsCOSEWIC)
 
 ## Main Steps
 
-The main function is *multiFit()*, which takes a data set of DU abundances, calculates *Percent Change* and *Probability of Decline* using 3 alternative methods (see [wiki](https://github.com/SOLV-Code/MetricsCOSEWIC/wiki/1-Probability-of-Decline:-Estimation-Methods)), then produces summary files and diagnostic plotss.
+The main function is *multiFit()*, which takes a data set of DU abundances, calculates *Percent Change* and *Probability of Decline* using 3 alternative methods (see [wiki](https://github.com/SOLV-Code/MetricsCOSEWIC/wiki/1-Probability-of-Decline:-Estimation-Methods)), then produces summary files and diagnostic plots. **Note**:*This function call does a log-transform before estimating the slope, but then converts the estimate of perc change back to the original units.* 
 
 The data needs to be organized into a data frame like this:
 
@@ -41,22 +41,17 @@ DU | Year | Abd
 Stock1 | 1960 | 7850.564
 Stock1 | 1961 | 29719.99
 Stock1 | 1962 | 22306.82
-Stock1 | 1963 | 20187.16
-Stock1 | 1964 | 4261.735
-Stock1 | 1965 | 17719.84
-Stock1 | 1966 | 18841.35
-Stock1 | 1967 | 28037.73
-Stock1 | 1968 | 33645.27
-Stock1 | 1969 | 6729.055
-Stock1 | 1970 | 5046.791
-Stock1 | 1971 | 2579.471
 
 
 Using the built in data set, the function call looks like this:
 
+
 ```
 data.in <- SR_Sample %>% select(Stock,Year,Spn) %>% rename(DU=Stock,Abd = Spn)
+
+
 window.in <- data.frame(DU = unique(data.in$DU),Window = 13)
+# this assumes that all DUs have a 4yr avg generation, and calculates Perc Change over 3 gen +1
 
 multi.out <- multiFit(data.df, window.df, plot.file =  "Test_PercChange_Plots.pdf")
 
@@ -68,7 +63,35 @@ write.csv(multi.out$Summary,"Test_Summary.csv",row.names = FALSE)
 ```
 
 
+*multiFit()* is a wrapper for *comparePercChange()*, which does the calculation for a single DU.
+*comparePercChange* provides more end-user control of settings and has more detailed output.
+Using the built in data set, the function call looks like this:
+
+```
+stk <- "Stock3"
+gen <- 4
+yrs.do <- (3 * gen) +1
+calc.yr <- 2017
+
+test.df <- SR_Sample %>%
+            dplyr::filter(Stock == stk) %>%
+            select(Year,Spn)
+head(test.df)
+
+test.df.sub <- test.df %>% dplyr::filter(Year > calc.yr - yrs.do )
+test.df.sub
+
+fit.out <- comparePercChange(du.label = stk,
+                             du.df = test.df,
+                             yrs.window = yrs.do ,
+                             calc.yr = 2017,
+                             samples.out = TRUE,
+                             plot.pattern = TRUE,
+                             plot.posteriors = TRUE,
+                             plot.boxes  = TRUE)
 
 
+names(fit.out)
+fit.out$Summary
 
-
+```
