@@ -122,3 +122,38 @@ plotDistribution <- function(x.lab,samples,ref.lines, plot.range = NULL){
 
 
 
+#' plotBoxes
+#'
+#' Function to plot one or more posterior distributions (boxplots)
+#' @param box.df data frame with 5 rows (values for top whisker, top of box, median, bottom of box, bottom whisker) and 1 column for each distribution. Columns labels become axis labels.
+#' @param y.lab label for the value axis
+#' @param ref.lines named list, each element is one value for a vertical ref line
+#' @param plot.range numeric vector of length 2, specifying the plotting range for the variable.
+#' @export
+
+plotBoxes <- function(box.df, y.lab  = "Label", ref.lines = list(BM = -25), plot.range = NULL){
+
+
+num.boxes <- length(box.df)
+
+if(is.null(plot.range)){plot.range <- range(box.df,na.rm = TRUE)  }
+
+plot(1:5,1:5,type="n", ylim = plot.range, xlim = c(0,num.boxes+1),axes=FALSE, bty="n",xlab = "", ylab = y.lab)
+axis(2,las=2)
+axis(1,at = 1:dim(box.df)[2], labels = names(box.df))
+
+for(j in 1:length(names(ref.lines)) ){
+  abline(h = ref.lines[[j]],col="red")
+  text(par("usr")[1],ref.lines[[j]],names(ref.lines)[j],xpd=NA,adj = c(1,0.5),col="red")
+}
+
+for(i in 1:dim(box.df)[2]){
+
+
+  segments(i,box.df[1,i],i,box.df[5,i],col="darkblue",lwd=2,lend=1)
+  rect(i-0.25,box.df[2,i],i+0.25,box.df[4,i],col="white",border="darkblue")
+  segments(i-0.25,box.df[3,i],i+0.25,box.df[3,i],col="darkblue",lwd=4,lend=1)
+
+}
+
+} # end plotBoxes
