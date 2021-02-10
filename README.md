@@ -7,6 +7,9 @@ R Package for calculating COSEWIC metrics. Initial focus is on alternative estim
 * Dr. Carrie Holt (Project Lead, Carrie.Holt"AT"dfo-mpo.gc.ca)
 
 
+
+
+
 ## Background
 
 * initial version is a spin-off from a metrics package developed for status assessments under Canada's Wild Salmon policy ([WSPMetrics](https://github.com/Pacific-salmon-assess/WSP-Metrics-Pkg)).
@@ -28,7 +31,7 @@ install_github("SOLV-Code/MetricsCOSEWIC", dependencies = TRUE, build_vignettes 
 library(MetricsCOSEWIC)				
 ```
 
-
+**Note: You also need to install [JAGS](http://mcmc-jags.sourceforge.net/).**
 
 ## Main Steps
 
