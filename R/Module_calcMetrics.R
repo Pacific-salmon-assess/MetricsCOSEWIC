@@ -40,6 +40,11 @@ require(tidyverse)
 require(R2jags)
 
 
+warning("NOT YET ADAPTED FOR COSEWIC")
+out.df <- NA
+
+if(FALSE){
+
 if(is.null(retro.start)){retro.start <- max(yrs.in)-9}
 
 
@@ -146,12 +151,12 @@ out.df$Status[out.df$Value <= out.df$LBM] <- "Red"
 out.df$Status[out.df$Value > out.df$UBM] <- "Green"
 out.df$Status[out.df$Value > out.df$LBM & out.df$Value <= out.df$UBM] <- "Amber"
 
+}
 
 
-out.df
 
 
-
+return(out.df)
 
 
 
