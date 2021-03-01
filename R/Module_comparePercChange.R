@@ -20,6 +20,14 @@ plot.pattern = TRUE, plot.posteriors = TRUE, plot.boxes  = TRUE){
 du.df.sub <- du.df %>% dplyr::filter(Year > calc.yr - yrs.window, Year <= calc.yr)
 du.df.sub
 
+  # If any zeroes in the data, then the log-transform below causes problems
+  # using the strategy from Perry et al 2021 (https://journals.plos.org/plosone/article/comments?id=10.1371/journal.pone.0245941)
+  # as suggested by Carrie Holt at https://github.com/SOLV-Code/MetricsCOSEWIC/issues/15
+
+  zero.idx <- du.df.sub[,2] == 0
+  zero.idx[is.na(zero.idx)] <- FALSE
+
+  du.df.sub[zero.idx,2] <- runif(sum(zero.idx,na.rm = TRUE),0.00000001, min(du.df.sub[!zero.idx,2],na.rm = TRUE)/2)
 
 
 
