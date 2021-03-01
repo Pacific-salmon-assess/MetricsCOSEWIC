@@ -20,7 +20,7 @@ calcPercChangeMCMC(
 
 \item{method}{either "jags" (default), "rstanarm", or "rstan". For properties and discussion of strengths/limitations, refer to the \href{https://github.com/SOLV-Code/MetricsCOSEWIC/wiki/1-Probability-of-Decline:-Estimation-Methods}{MetricsCOSEWIC wiki}.}
 
-\item{model.in}{if NULL, use the built in functions for each method: trend.bugs.1() fir jags, ETC}
+\item{model.in}{if NULL, use the built in functions for each method: trend.bugs.1() for jags, ETC}
 
 \item{perc.change.bm}{benchmark for Prob(Decl>BM), default = -25}
 
@@ -40,6 +40,8 @@ and then use plot.trend.fit().}
 }
 \description{
 MCMC version of trend metric calculation
+This function calculates the percent change in abundances based on an exponential model of population decline, as per IUCN guidelines
+It esimates a distribution of percent declines over the period of the time-seris, and provides the probability of declines being greater than a specified threhold
 }
 \keyword{MCMC,}
 \keyword{slope,}

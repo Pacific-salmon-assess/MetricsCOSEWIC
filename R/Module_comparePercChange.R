@@ -17,8 +17,12 @@ plot.pattern = TRUE, plot.posteriors = TRUE, plot.boxes  = TRUE){
 
 #warning("NOTE: input time series is log-transformed before slope calc, but Perc Change estimate is backtransformed")
 
-du.df.sub <- du.df %>% dplyr::filter(Year > calc.yr - yrs.window )
+du.df.sub <- du.df %>% dplyr::filter(Year > calc.yr - yrs.window, Year <= calc.yr)
 du.df.sub
+
+
+
+
 
 est.simple <- calcPercChangeSimple(log(du.df.sub[,2]))
 
