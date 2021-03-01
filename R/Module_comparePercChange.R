@@ -20,17 +20,28 @@ plot.pattern = TRUE, plot.posteriors = TRUE, plot.boxes  = TRUE){
 du.df.sub <- du.df %>% dplyr::filter(Year > calc.yr - yrs.window, Year <= calc.yr)
 du.df.sub
 
-  # If any zeroes in the data, then the log-transform below causes problems
-  # using the strategy from Perry et al 2021 (https://journals.plos.org/plosone/article/comments?id=10.1371/journal.pone.0245941)
-  # as suggested by Carrie Holt at https://github.com/SOLV-Code/MetricsCOSEWIC/issues/15
+# If any zeroes in the data, then the log-transform below causes problems
+# using the strategy from Perry et al 2021 (https://journals.plos.org/plosone/article/comments?id=10.1371/journal.pone.0245941)
+# as suggested by Carrie Holt at https://github.com/SOLV-Code/MetricsCOSEWIC/issues/15
 
-  zero.idx <- du.df.sub[,2] == 0
-  zero.idx[is.na(zero.idx)] <- FALSE
+zero.idx <- du.df.sub[,2] == 0
+zero.idx[is.na(zero.idx)] <- FALSE
 
-  du.df.sub[zero.idx,2] <- runif(sum(zero.idx,na.rm = TRUE),0.00000001, min(du.df.sub[!zero.idx,2],na.rm = TRUE)/2)
+du.df.sub[zero.idx,2] <- runif(sum(zero.idx,na.rm = TRUE),0.00000001, min(du.df.sub[!zero.idx,2],na.rm = TRUE)/2)
 
 
+# if too many NA, then things can go haywire in the MCMC.
+# -> Need at least half the data points before trying MCMC
+if(sum(!is.na(trend.vec)) < length(trend.vec/2) ){na.skip <- TRUE} # this results in NA outputs, but stops crashing
+if(sum(!is.na(trend.vec)) >= length(trend.vec/2) ){na.skip <- FALSE}
 
+out.mat <- matrix(NA,ncol = 4, nrow=13,
+                        dimnames = list(c("MLE",paste("Jags",percentile.labels,sep="_"),
+													paste("RStanArm",percentile.labels,sep="_")),
+                                      c("pchange","probdecl","slope","intercept"))
+                            )
+
+if(!na.skip){
 
 est.simple <- calcPercChangeSimple(log(du.df.sub[,2]))
 
@@ -57,11 +68,7 @@ percentile.values <- c(0.025,0.25,0.5,0.75,0.975)
 percentile.labels <- c("p2.5","p25","Med","p75","p97.5","Rhat")
 extract.labels <- c("2.5%","25%","50%","75%","97.5%","Rhat")
 
-out.mat <- matrix(NA,ncol = 4, nrow=13,
-                        dimnames = list(c("MLE",paste("Jags",percentile.labels,sep="_"),
-													paste("RStanArm",percentile.labels,sep="_")),
-                                      c("pchange","probdecl","slope","intercept"))
-                            )
+
 
 out.mat["MLE",] <-round(c(est.simple$pchange,NA,est.simple$slope,est.simple$intercept),5)
 
@@ -84,8 +91,6 @@ percchange.df <- data.frame(
   Stan =  quantile(est.rstanarm$samples$Perc_Change,probs = percentile.values))
 
 
-out.list <- list(Summary = out.mat)
-if(samples.out){  out.list <- c(out.list, samples = list(rstanarm = est.rstanarm$samples, jags = est.jags$samples)) }
 
 
 if(plot.pattern){
@@ -122,6 +127,19 @@ plotDistribution(
 if(plot.boxes){
 plotBoxes(box.df = percchange.df, y.lab  = "Perc Change", ref.lines = list(BM = -25), plot.range = NULL)
 }
+
+
+} # end if !na.skip
+
+
+
+out.list <- list(Summary = out.mat)
+
+if(samples.out & !na.skip){  out.list <- c(out.list, samples = list(rstanarm = est.rstanarm$samples, jags = est.jags$samples)) }
+if(samples.out & na.skip){  out.list <- c(out.list, samples = list(rstanarm = NA, jags = NA)) }
+
+
+
 
 return(out.list)
 
