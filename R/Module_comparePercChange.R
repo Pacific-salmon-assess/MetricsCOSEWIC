@@ -32,8 +32,8 @@ du.df.sub[zero.idx,2] <- runif(sum(zero.idx,na.rm = TRUE),0.00000001, min(du.df.
 
 # if too many NA, then things can go haywire in the MCMC.
 # -> Need at least half the data points before trying MCMC
-if(sum(!is.na(trend.vec)) < length(trend.vec/2) ){na.skip <- TRUE} # this results in NA outputs, but stops crashing
-if(sum(!is.na(trend.vec)) >= length(trend.vec/2) ){na.skip <- FALSE}
+if(sum(!is.na(du.df.sub[,2])) < length(du.df.sub[,2]/2) ){na.skip <- TRUE} # this results in NA outputs, but stops crashing
+if(sum(!is.na(du.df.sub[,2])) >= length(du.df.sub[,2]/2) ){na.skip <- FALSE}
 
 out.mat <- matrix(NA,ncol = 4, nrow=13,
                         dimnames = list(c("MLE",paste("Jags",percentile.labels,sep="_"),
