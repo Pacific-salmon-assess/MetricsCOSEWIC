@@ -36,7 +36,7 @@ last.yr <- max(df.use$Year)
 if(sum(!is.na(df.use$Abd)) > 6 ){
   if(sum(df.use$Abd != 0,na.rm=TRUE)> 5 ){
 
-# TEMPORARY PATCH (erplace 0 b/c log transform inside of fn call below)
+# TEMPORARY PATCH (replace 0 b/c log transform inside of fn call below)
 df.use <- df.use  %>% mutate(Abd = recode(Abd, "0" = 0.1))
 
 # Do the calculations
