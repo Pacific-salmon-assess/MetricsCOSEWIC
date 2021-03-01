@@ -35,6 +35,11 @@ du.df.sub[zero.idx,2] <- runif(sum(zero.idx,na.rm = TRUE),0.00000001, min(du.df.
 if(sum(!is.na(du.df.sub[,2])) < length(du.df.sub[,2]/2) ){na.skip <- TRUE} # this results in NA outputs, but stops crashing
 if(sum(!is.na(du.df.sub[,2])) >= length(du.df.sub[,2]/2) ){na.skip <- FALSE}
 
+
+percentile.values <- c(0.025,0.25,0.5,0.75,0.975)
+percentile.labels <- c("p2.5","p25","Med","p75","p97.5","Rhat")
+extract.labels <- c("2.5%","25%","50%","75%","97.5%","Rhat")
+
 out.mat <- matrix(NA,ncol = 4, nrow=13,
                         dimnames = list(c("MLE",paste("Jags",percentile.labels,sep="_"),
 													paste("RStanArm",percentile.labels,sep="_")),
@@ -64,9 +69,7 @@ est.rstanarm <- calcPercChangeMCMC(vec.in = log(du.df.sub[,2]),
 )
 
 
-percentile.values <- c(0.025,0.25,0.5,0.75,0.975)
-percentile.labels <- c("p2.5","p25","Med","p75","p97.5","Rhat")
-extract.labels <- c("2.5%","25%","50%","75%","97.5%","Rhat")
+
 
 
 
