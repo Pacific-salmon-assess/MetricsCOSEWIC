@@ -19,6 +19,7 @@ R Package for calculating COSEWIC metrics. Initial focus is on alternative estim
    * streamline the calculations and outputs for multiple DUs
 * This is a stand-alone package, and is expected to diverge from the [WSPMetrics](https://github.com/Pacific-salmon-assess/WSP-Metrics-Pkg) package as functionality is expanded with contributions from various COSEWIC expert processess.
 
+	
 
 ### Install
 
@@ -97,3 +98,23 @@ names(fit.out)
 fit.out$Summary
 
 ```
+
+## Worked Examples
+
+We are building a library of worked examples, showing
+the steps from `*.csv` data files to summary outputs.
+
+* Sebastes
+
+
+
+
+
+
+
+
+
+
+
+
+
