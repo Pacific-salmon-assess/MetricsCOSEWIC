@@ -3,8 +3,8 @@
 .RData
 .Ruserdata
 
-*.pdf
-*.png
+#*.pdf
+#*.png
 
 
 testing_output
