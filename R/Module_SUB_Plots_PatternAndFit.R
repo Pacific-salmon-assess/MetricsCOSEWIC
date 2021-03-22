@@ -26,7 +26,9 @@ options(scipen=3)
 # - add option to label hgrid with modified values (e.g. plot logs, but label with raw numbers)
 
 
-if(is.null(vals.lim)){vals.lim <- c(0,max(pretty(vals)))}
+# old version: messes up the plots with the index data for birds
+#if(is.null(vals.lim)){vals.lim <- c(0,max(pretty(vals)))}
+if(is.null(vals.lim)){vals.lim <- range(pretty(vals))}
 
 plot(yrs,vals,axes=FALSE,ylim=vals.lim,type="l",lwd=width,col=color,xlab="",ylab="")
 
