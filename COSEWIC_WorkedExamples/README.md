@@ -9,11 +9,11 @@ Use `?SR_Sample` or `?DU_SampleData` for the details.
 
 ### Marine Fish
 
-* [Sebastes](https://github.com/SOLV-Code/MetricsCOSEWIC/tree/main/COSEWIC_WorkedExamples/Sebastes)
+* [Sebastes](https://github.com/SOLV-Code/MetricsCOSEWIC/tree/main/COSEWIC_WorkedExamples/MarineFish/Sebastes)
 
 ### Birds
 
-* 
+* [Hirundinidae](https://github.com/SOLV-Code/MetricsCOSEWIC/tree/main/COSEWIC_WorkedExamples/Birds/Hirundinidae)
 
 
 
