@@ -17,7 +17,7 @@ install_github("SOLV-Code/MetricsCOSEWIC",
 library(MetricsCOSEWIC)
 
 
-folder.path <- "COSEWIC_WorkedExamples/Sebastes/"
+folder.path <- "COSEWIC_WorkedExamples/MarineFish/Sebastes/"
 
 
 
