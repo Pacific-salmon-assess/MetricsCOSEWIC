@@ -36,8 +36,10 @@ last.yr <- max(df.use$Year)
 if(sum(!is.na(df.use$Abd)) > 6 ){
   if(sum(df.use$Abd != 0,na.rm=TRUE)> 5 ){
 
+# OLD: Now handling inside comparePercChange 
+#see issue: https://github.com/SOLV-Code/MetricsCOSEWIC/issues/15
 # TEMPORARY PATCH (replace 0 b/c log transform inside of fn call below)
-df.use <- df.use  %>% mutate(Abd = recode(Abd, "0" = 0.1))
+#df.use <- df.use  %>% mutate(Abd = recode(Abd, "0" = 0.1))
 
 # Do the calculations
 fit.out <- comparePercChange(du.label = du.do,
