@@ -27,6 +27,8 @@ du.df.sub
 zero.idx <- du.df.sub[,2] == 0
 zero.idx[is.na(zero.idx)] <- FALSE
 
+if(sum(zero.idx) > 0) {warning(paste0(sum(zero.idx),"records of 0 were replaced with a random value greater than 0 and less than one-half of the lowest non-zero value in the data for that variable, as per Perry et al 2021"))}
+
 du.df.sub[zero.idx,2] <- runif(sum(zero.idx,na.rm = TRUE),0.00000001, min(du.df.sub[!zero.idx,2],na.rm = TRUE)/2)
 
 
