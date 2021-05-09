@@ -20,6 +20,14 @@ R Package for calculating COSEWIC metrics. Initial focus is on alternative estim
 * This is a stand-alone package, and is expected to diverge from the [WSPMetrics](https://github.com/Pacific-salmon-assess/WSP-Metrics-Pkg) package as functionality is expanded with contributions from various COSEWIC expert processess.
 
 	
+## Details: Wiki Pages
+
+* Status assessment context: LINKS
+* Package purpose: LINKS
+* etc.
+
+	
+	
 
 ### Install
 
