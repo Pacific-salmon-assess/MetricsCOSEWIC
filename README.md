@@ -20,7 +20,16 @@ R Package for calculating COSEWIC metrics. Initial focus is on alternative estim
 * This is a stand-alone package, and is expected to diverge from the [WSPMetrics](https://github.com/Pacific-salmon-assess/WSP-Metrics-Pkg) package as functionality is expanded with contributions from various COSEWIC expert processess.
 
 	
-## Details: Wiki Pages
+## Documentation
+
+### Reports and Presentations
+
+A progress report, presentation, and worked examples are available on [Google Drive](https://drive.google.com/drive/folders/1y1d0TF8v2kWWbHXkTaK0mb3BQjUc7xrZ?usp=sharing)
+
+
+
+
+### Wiki Pages
 
 * Status assessment context: LINKS
 * Package purpose: LINKS
@@ -31,7 +40,9 @@ R Package for calculating COSEWIC metrics. Initial focus is on alternative estim
 
 ### Install
 
-To install this package directly from github, use
+First, install the [R Statistical Software](https://mirror.rcg.sfu.ca/mirror/CRAN/) and the [RStudio front-end](https://www.rstudio.com/products/rstudio/download/).
+
+Then you can install this package directly from github, using the following code on the command line in RStudio.
 
 ```
 install.packages("devtools") # Install the devtools package
