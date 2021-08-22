@@ -124,7 +124,7 @@ plotPattern(yrs = test.df$Year ,vals = log(test.df$Spn),
             yrs.axis=TRUE,vals.axis=TRUE,
             vals.lim=c(0,14), hgrid=TRUE,vgrid=FALSE,
             pch.val=19,pch.bg=NULL)
-abline(v=c(calc.yr,calc.yr-yrs.window+1),col="red")
+abline(v=c(calc.yr,calc.yr-yrs.do+1),col="red")
 
 #plot(test.df$Year,log(test.df$Spn),
 #     type="o",col="darkblue",bty="n",
@@ -173,7 +173,17 @@ addFit(data.df = test.df.sub, coeff = list(intercept = est.jags$summary["interce
 )
 
 
+plotPattern(yrs = test.df.sub$Year ,vals = log(test.df.sub$Spn),
+            width=1,color="darkblue",
+            yrs.axis=TRUE,vals.axis=TRUE,
+            #vals.lim=c(10,14),
+            hgrid=TRUE,vgrid=FALSE,
+            pch.val=19,pch.bg=NULL)
+#abline(v=c(calc.yr,calc.yr-yrs.window+1),col="red")
 
+addFit(data.df = test.df.sub, coeff = list(intercept = est.jags$summary["intercept","50%"],
+                                           slope = est.jags$summary["slope","50%"] )
+)
 
 
 #################################################

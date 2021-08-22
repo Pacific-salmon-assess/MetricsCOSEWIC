@@ -106,13 +106,10 @@ plotPattern(yrs = du.df$Year ,vals = log(du.df[,2]),
             vals.lim=NULL, hgrid=TRUE,vgrid=FALSE,
             pch.val=19,pch.bg=NULL)
 
-
 addFit(data.df = du.df.sub, coeff = list(intercept = est.rstanarm$summary["intercept","50%"],
                                            slope = est.rstanarm$summary["slope","50%"] ) )
-
 addFit(data.df = du.df.sub, coeff = list(intercept = est.jags$summary["intercept","50%"],
                                            slope = est.jags$summary["slope","50%"] ) )
-
 addFit(data.df = du.df.sub, coeff = list(intercept = est.simple$intercept,slope = est.simple$slope )  )
 
 
