@@ -28,17 +28,16 @@ A progress report, presentation, and worked examples are available on [Google Dr
 
 
 
-
 ### Wiki Pages
 
-* Status assessment context: LINKS
-* Package purpose: LINKS
-* etc.
+* [Context and Purpose](https://github.com/SOLV-Code/MetricsCOSEWIC/wiki)
+* [Package Structure](https://github.com/SOLV-Code/MetricsCOSEWIC/wiki/1-Package-Structure)
+* [Probability of Decline: Estimation Methods](https://github.com/SOLV-Code/MetricsCOSEWIC/wiki/2-Probability-of-Decline:-Estimation-Methods)
 
 	
 	
 
-### Install
+## Install
 
 First, install the [R Statistical Software](https://mirror.rcg.sfu.ca/mirror/CRAN/) and the [RStudio front-end](https://www.rstudio.com/products/rstudio/download/).
 
@@ -123,13 +122,15 @@ fit.out$Summary
 We are building a library of worked examples, showing
 the steps from `*.csv` data files to summary outputs.
 
-Note that the use data sets that are external to the package.
+Note that these worked examples use data sets that are external to the package.
 Two sample data sets are included inside the package.
 Use `?SR_Sample` or `?DU_SampleData` for the details.
 
+
+
 ### Marine Fish
 
-* [Sebastes](https://github.com/SOLV-Code/MetricsCOSEWIC/tree/main/COSEWIC_WorkedExamples/MarineFish/Sebastes)
+* [Sebastes](https://github.com/SOLV-Code/MetricsCOSEWIC/tree/main/COSEWIC_WorkedExamples/MarineFish/Sebastes). 
 
 ### Birds
 
