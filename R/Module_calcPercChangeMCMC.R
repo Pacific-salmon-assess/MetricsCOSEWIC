@@ -48,7 +48,8 @@ if(is.null(model.in)){model.in <- trend.bugs.1}
 
 
 
-	# for details on priors, see https://github.com/SOLV-Code/WSP-Metrics-Code/issues/36
+	# for details on priors, see the wiki page at
+	# https://github.com/SOLV-Code/MetricsCOSEWIC/wiki/3-Priors-for-Bayesian-Slope-Estimates
 	data.in  <- list(Yr = yrs.in ,
 				Abd = vec.in,
 				N = length(yrs.in),
