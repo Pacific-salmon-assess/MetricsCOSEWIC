@@ -69,6 +69,10 @@ Using the built in data set, the function call looks like this:
 
 
 ```
+
+library(dplyr) 
+library(tidyr) 
+
 data.in <- SR_Sample %>% select(Stock,Year,Spn) %>% rename(DU=Stock,Abd = Spn)
 head(data.in)
 
