@@ -33,7 +33,7 @@ multi.out <- multiFit(data.df = test.data, window.df = test.data.window, plot.fi
 
 last.yr <- max(test.data$Year)
 
-comparePercChange(du.label = "DU 1",
+comparePercChange(du.label = "DU 2",
                   du.df = test.data,
                   yrs.window = 15,
                   calc.yr = last.yr,
