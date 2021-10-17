@@ -33,7 +33,7 @@ multi.out <- multiFit(data.df = test.data, window.df = test.data.window, plot.fi
 
 last.yr <- max(test.data$Year)
 
-comparePercChange(du.label = "DU 2",
+comparePercChange(du.label = "DU 1",
                   du.df = test.data,
                   yrs.window = 15,
                   calc.yr = last.yr,
@@ -62,3 +62,22 @@ multi.out <- multiFit(data.df = test.data.2,
                       plot.file = paste0(folder.path,"/TestSummaryPlots.pdf"))
 
 multi.out
+
+
+
+
+
+
+
+last.yr <- max(test.data.2$Year)
+
+comparePercChange(du.label = "Stock23",
+                  du.df = test.data.2,
+                  yrs.window = 15,
+                  calc.yr = last.yr,
+                  samples.out = FALSE,
+                  plot.pattern = TRUE,
+                  plot.posteriors = TRUE,
+                  plot.boxes  = TRUE)
+
+

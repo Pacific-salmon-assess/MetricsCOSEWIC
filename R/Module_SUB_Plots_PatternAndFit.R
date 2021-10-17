@@ -93,31 +93,38 @@ segments(min(data.df$Year), coeff$intercept ,
 #' @export
 
 
-plotDistribution <- function(x.lab,samples,ref.lines, plot.range = NULL){
+plotDistribution <- function(x.lab,samples,det.est = NULL, plot.range = NULL){
 
   num.samples <- length(names(samples))
 
   if(num.samples < 4){col.use <- c("darkblue","red", "red");lwd.use <- c(2,1,1); lty.use <- c(1,1,2)}
-  if(num.samples >= 4){col.use <- c("darkbgrey"); lwd.use <- 1; lty.use <- 1}
+  if(num.samples >= 4){col.use <- c("darkgrey"); lwd.use <- 1; lty.use <- 1}
 
   kernels <- lapply(samples, function(x){dens.out <- density(x);  return(data.frame(x = dens.out$x, y = dens.out$y)) })
 
   dens.range <- c(0, max(unlist(lapply(kernels,function(z){ return(max(z$y))  }))))
-  if(is.null(plot.range)){plot.range <- range(c(unlist(ref.lines),unlist(lapply(kernels,function(z){ return(range(z$x))  }))   ))  }
+  if(is.null(plot.range)){plot.range <- range(c(det.est, -70),unlist(lapply(kernels,function(z){ return(range(z$x))  }))   )  }
 
   plot(1:5,1:5,type="n", xlim = plot.range, ylim = dens.range,axes=FALSE, bty="n",xlab = x.lab, ylab = "Density")
   axis(1)
 
-  for(i in 1:length(names(kernels))){
+
+
+  #if(num.samples < 4){legend("topright", legend = names(samples),bty="n",col=col.use,lwd=lwd.use,lty=lty.use)}
+
+  if(!is.null(det.est)){ abline(v = det.est,col="darkblue",lty=2,lwd=2)
+				text(det.est,par("usr")[4],labels = "Det",,xpd=NA,adj = c(0.5,0),col="darkblue")
+				}
+
+   abline(v = c(-70,-50,-30),col="red")
+    text(c(-70,-50,-30),par("usr")[4],labels = paste0(c(-70,-50,-30),"%"),xpd=NA,adj = c(0.5,-0.2),col="red")
+
+
+
+   for(i in 1:length(names(kernels))){
     lines(kernels[[i]]$x,kernels[[i]]$y,col=col.use[i],lwd=lwd.use[i],lty=lty.use[i])
   }
 
-  if(num.samples < 4){legend("topright", legend = names(samples),bty="n",col=col.use,lwd=lwd.use,lty=lty.use)}
-
-  for(j in 1:length(names(ref.lines)) ){
-    abline(v = ref.lines[[j]],col="darkblue")
-    text(ref.lines[[j]],par("usr")[4],names(ref.lines)[j],xpd=NA,adj = c(0.5,0),col="darkblue")
-  }
 
 } # end plotDistribution()
 
@@ -133,24 +140,22 @@ plotDistribution <- function(x.lab,samples,ref.lines, plot.range = NULL){
 #' @param plot.range numeric vector of length 2, specifying the plotting range for the variable.
 #' @export
 
-plotBoxes <- function(box.df, y.lab  = "Label", ref.lines = list(BM = -25), plot.range = NULL){
+plotBoxes <- function(box.df, y.lab  = "Label", det.est = NULL, plot.range = NULL){
 
 
 num.boxes <- length(box.df)
 
-if(is.null(plot.range)){plot.range <- range(box.df,na.rm = TRUE)  }
+if(is.null(plot.range)){plot.range <- range(c(box.df,-70),na.rm = TRUE)  }
 
 plot(1:5,1:5,type="n", ylim = plot.range, xlim = c(0,num.boxes+1),axes=FALSE, bty="n",xlab = "", ylab = y.lab)
 axis(2,las=2)
 axis(1,at = 1:dim(box.df)[2], labels = names(box.df))
 
-for(j in 1:length(names(ref.lines)) ){
-  abline(h = ref.lines[[j]],col="red")
-  text(par("usr")[1],ref.lines[[j]],names(ref.lines)[j],xpd=NA,adj = c(1,0.5),col="red")
-}
+
+   abline(h = c(-70,-50,-30),col="red")
+    text(par("usr")[2],c(-70,-50,-30),labels = paste0(c(-70,-50,-30),"%"),adj = c(1,0),col="red")#xpd=NA,
 
 for(i in 1:dim(box.df)[2]){
-
 
   segments(i,box.df[1,i],i,box.df[5,i],col="darkblue",lwd=2,lend=1)
   rect(i-0.25,box.df[2,i],i+0.25,box.df[4,i],col="white",border="darkblue")
@@ -159,3 +164,34 @@ for(i in 1:dim(box.df)[2]){
 }
 
 } # end plotBoxes
+
+
+
+plotFit <- function(data.plot,fit.plot,title = "Fitted Trend",y.lab = "Abundance",exp.do = FALSE){
+# Using code from Ross Claytor
+
+  plot.df <- data.frame(Year = data.plot$Year,
+                        Val = log(data.plot[,2])  ) %>%
+    mutate(Med = fit.plot["intercept","50%"] + fit.plot["slope","50%"] * 1:length(data.plot$Year)) %>%
+    mutate(p2.5 = fit.plot["intercept","2.5%"] + fit.plot["slope","2.5%"] * 1:length(data.plot$Year)) %>%
+    mutate(p97.5 = fit.plot["intercept","97.5%"] + fit.plot["slope","97.5%"] * 1:length(data.plot$Year))
+
+  if(exp.do){ plot.df <- plot.df %>% mutate_at(2:5,exp)  }
+
+  fit.ggplot <- ggplot() +
+    geom_line(aes(x=plot.df$Year, y=plot.df$Val)) +
+    geom_point(aes(x=plot.df$Year, y=plot.df$Val), shape=16) +
+    geom_line(aes(x=plot.df$Year, y=plot.df$Med), linetype='solid') +
+    geom_line(aes(x=plot.df$Year, y=plot.df$p2.5), linetype='dotdash') +
+    geom_line(aes(x=plot.df$Year, y=plot.df$p97.5), linetype='dotdash') +
+    scale_x_continuous(breaks= seq(min(plot.df$Year)-1,max(plot.df$Year)+1,2)) +
+    xlab('') + ylab(y.lab) +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          panel.background = element_blank(), axis.line = element_line(colour = "black")) +
+
+    ggtitle(title)
+
+  return(list(plot = fit.ggplot,data = plot.df))
+
+}
+

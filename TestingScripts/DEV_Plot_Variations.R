@@ -11,9 +11,6 @@ library(MetricsCOSEWIC)
 
 
 
-
-
-
 #####################################################
 # TESTING INDIVIDUAL FUNCTIONS
 
@@ -26,27 +23,45 @@ yrs.do <- (3 * gen) +1
 calc.yr <- 2017
 
 test.df <- SR_Sample %>%
-            dplyr::filter(Stock == stk) %>%
-            select(Year,Spn)
+  dplyr::filter(Stock == stk) %>%
+  select(Year,Spn)
 head(test.df)
 
 test.df.sub <- test.df %>% dplyr::filter(Year > calc.yr - yrs.do )
 test.df.sub
 
-
+pdf("TestPlot_ComparePercChange.pdf" ,onefile=TRUE,height=8.5, width = 11)
 
 fit.out <- comparePercChange(du.label = stk,
                              du.df = test.df,
                              yrs.window = yrs.do ,
                              calc.yr = 2017,
                              samples.out = TRUE,
+                             plot.fitted = TRUE,
                              plot.pattern = TRUE,
                              plot.posteriors = TRUE,
                              plot.boxes  = TRUE)
-
+dev.off()
 
 names(fit.out)
 fit.out$Summary
+
+
+############################
+# testing multifit
+
+test.data <- SR_Sample %>% dplyr::rename(DU=Stock,Abd=Spn) %>% select(DU,Year,Abd)
+#test.data <- DU_SampleData
+test.data.window <- data.frame(DU = unique(test.data$DU),Window = 15)
+
+
+folder.path = getwd()
+
+multi.out <- multiFit(data.df = test.data ,
+                      window.df = test.data.window, plot.file = paste0(folder.path,"/TestSummaryPlots.pdf"))
+
+
+
 
 
 
@@ -126,34 +141,6 @@ addFit(data.df = test.df.sub, coeff = list(intercept = est.jags$summary["interce
 ###############################################################
 # DEV FOR ROSS'S PLOT
 
-
-plotFit <- function(data.plot,fit.plot,title = "Fitted Trend",y.lab = "Abundance",exp.do = FALSE){
-
-
-  plot.df <- data.frame(Year = data.plot$Year,
-                        Val = log(data.plot$Spn)  ) %>%
-    mutate(Med = fit.plot["intercept","50%"] + fit.plot["slope","50%"] * 1:length(data.plot$Year)) %>%
-    mutate(p2.5 = fit.plot["intercept","2.5%"] + fit.plot["slope","2.5%"] * 1:length(data.plot$Year)) %>%
-    mutate(p97.5 = fit.plot["intercept","97.5%"] + fit.plot["slope","97.5%"] * 1:length(data.plot$Year))
-
-  if(exp.do){ plot.df <- plot.df %>% mutate_at(2:5,exp)  }
-
-  fit.ggplot <- ggplot() +
-    geom_line(aes(x=plot.df$Year, y=plot.df$Val)) +
-    geom_point(aes(x=plot.df$Year, y=plot.df$Val), shape=16) +
-    geom_line(aes(x=plot.df$Year, y=plot.df$Med), linetype='solid') +
-    geom_line(aes(x=plot.df$Year, y=plot.df$p2.5), linetype='dotdash') +
-    geom_line(aes(x=plot.df$Year, y=plot.df$p97.5), linetype='dotdash') +
-    scale_x_continuous(breaks= seq(min(plot.df$Year)-1,max(plot.df$Year)+1,2)) +
-    xlab('') + ylab(y.lab) +
-    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-          panel.background = element_blank(), axis.line = element_line(colour = "black")) +
-
-    ggtitle(title)
-
-  return(list(plot = fit.ggplot,data = plot.df))
-
-}
 
 
 test.reg <- plotFit(data.plot = test.df.sub,

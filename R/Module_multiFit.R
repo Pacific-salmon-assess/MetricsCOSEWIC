@@ -24,7 +24,7 @@ for(du.do in sort(unique(data.df$DU)) ){
 print(paste("starting",du.do, "--------------------------------"))
 
 
-layout(matrix(c(1,1,2,3),ncol=2,byrow=TRUE))
+
 
 # extract the data for the current DU
 df.use <- data.df %>% dplyr::filter(DU == du.do) %>%  select(Year,Abd)
@@ -42,12 +42,16 @@ if(sum(!is.na(df.use$Abd)) > 6 ){
 #df.use <- df.use  %>% mutate(Abd = recode(Abd, "0" = 0.1))
 
 # Do the calculations
+
+#layout(matrix(c(1,2,3,4),ncol=2,byrow=TRUE))
+
 fit.out <- comparePercChange(du.label = du.do,
                               du.df = df.use,
                               yrs.window = window.df  %>% dplyr::filter(DU == du.do) %>%  select(Window) %>% unlist,
                              calc.yr = last.yr,
                               samples.out = FALSE,
                              plot.pattern = TRUE,
+							 plot.fitted = FALSE, #TRUE,
                              plot.posteriors = TRUE,
                              plot.boxes  = TRUE)
 
@@ -55,7 +59,7 @@ fit.out <- comparePercChange(du.label = du.do,
 out.df <- rbind(out.df, cbind(DU = du.do, Year = last.yr, rownames_to_column(as.data.frame(fit.out$Summary),"Var")))
 
 
-title(main = du.do, outer=TRUE,line=-2,col.main = "darkblue",cex.main=1.7)
+
 }} # end if have data
 
 } # end looping through DUs
@@ -68,8 +72,8 @@ dev.off()
 summary.out <- out.df %>% select(DU,Year,Var, pchange) %>% dplyr::filter(grepl("MLE", Var ) | grepl("Med", Var )) %>%
    mutate(pchange = round(pchange,1)) %>%
    pivot_wider(id_cols = c(DU,Year),names_from = Var, values_from = pchange ) %>%
-  rowwise() %>% mutate(Min = min(MLE,Jags_Med, RStanArm_Med,na.rm= TRUE),
-                       Max = max(MLE,Jags_Med, RStanArm_Med,na.rm= TRUE)) %>%
+  rowwise() %>% mutate(Min = min(MLE,Jags_Med, na.rm= TRUE),
+                       Max = max(MLE,Jags_Med, na.rm= TRUE)) %>%
   mutate(Diff = Max- Min) %>% arrange(Min)
 
 

@@ -13,7 +13,7 @@
 
 
 comparePercChange  <- function(du.label,du.df, yrs.window, calc.yr, samples.out = TRUE,
-plot.pattern = TRUE, plot.posteriors = TRUE, plot.boxes  = TRUE, do.rstanarm = FALSE){
+plot.pattern = TRUE, plot.fitted = TRUE, plot.posteriors = TRUE, plot.boxes  = TRUE,  do.rstanarm = FALSE){
 
 #warning("NOTE: input time series is log-transformed before slope calc, but Perc Change estimate is backtransformed")
 
@@ -126,6 +126,10 @@ percchange.df <- data.frame(
 
 
 
+
+
+
+
 if(plot.pattern){
 
 plotPattern(yrs = du.df$Year ,vals = log(du.df[,2]),
@@ -143,7 +147,15 @@ addFit(data.df = du.df.sub, coeff = list(intercept = est.jags$summary["intercept
 addFit(data.df = du.df.sub, coeff = list(intercept = est.simple$intercept,slope = est.simple$slope )  )
 
 
+title(main = du.label, outer=TRUE,line=-2,col.main = "darkblue",cex.main=1.7)
+
 }
+
+
+
+
+
+
 
 if(plot.posteriors){
 
@@ -152,7 +164,7 @@ if(do.rstanarm) {
 plotDistribution(
   x.lab = "Perc Change",
   samples = list(jags = est.jags$samples$Perc_Change ,rstanarm = est.rstanarm$samples$Perc_Change   ),
-  ref.lines = list(MLE = est.simple$pchange,BM = -25),
+  det.est = est.simple$pchange,
   plot.range = c(-90,90) #NULL #c(-90,90)
 	)
 }
@@ -163,12 +175,12 @@ if(!do.rstanarm) {
 
 plotDistribution(
   x.lab = "Perc Change",
-  samples = list(jags = est.jags$samples$Perc_Change ),
-  ref.lines = list(MLE = est.simple$pchange,BM = -25),
+  samples = list(Bayesian = est.jags$samples$Perc_Change ),
+  det.est = est.simple$pchange,
   plot.range = c(-90,90) #NULL #c(-90,90)
 	)
 }
-
+title(main = du.label, outer=TRUE,line=-2,col.main = "darkblue",cex.main=1.7)
 }
 
 
@@ -176,9 +188,24 @@ plotDistribution(
 
 
 if(plot.boxes){
-plotBoxes(box.df = percchange.df, y.lab  = "Perc Change", ref.lines = list(BM = -25), plot.range = NULL)
+plotBoxes(box.df = percchange.df %>% dplyr::rename(Deterministic = MLE, Bayesian = Jags), y.lab  = "Perc Change",   det.est = est.simple$pchange, plot.range = NULL)
+title(main = du.label, outer=TRUE,line=-2,col.main = "darkblue",cex.main=1.7)
 }
 
+
+
+if(plot.fitted){
+
+
+gg.plot <- plotFit(data.plot = du.df.sub,
+                    fit.plot = est.jags$summary,
+					title = "Fitted Trend",
+                    y.lab = "Mature Individuals",
+                    exp.do = FALSE)
+
+print(gg.plot$plot)
+
+}
 
 } # end if !na.skip
 
