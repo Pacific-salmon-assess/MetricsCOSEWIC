@@ -49,15 +49,15 @@ out.mat <- matrix(NA,ncol = 4, nrow=13,
                                       c("pchange","probdecl","slope","intercept"))
                             )
 }
-				
+
 if(!do.rstanarm) {
 out.mat <- matrix(NA,ncol = 4, nrow=7,
                         dimnames = list(c("MLE",paste("Jags",percentile.labels,sep="_")),
                                       c("pchange","probdecl","slope","intercept"))
                             )
-}				
-				
-				
+}
+
+
 
 
 if(!na.skip){
@@ -81,10 +81,10 @@ if(do.rstanarm) {est.rstanarm <- calcPercChangeMCMC(vec.in = log(du.df.sub[,2]),
                                    mcmc.plots = FALSE,
                                    convergence.check = FALSE)   # NOT IMPLEMENTED YET
 								   }
-if(!do.rstanarm){est.rstanarm <- NULL}								   
-								   
-								   
-								  
+if(!do.rstanarm){est.rstanarm <- NULL}
+
+
+
 
 
 
@@ -199,8 +199,8 @@ if(plot.fitted){
 
 gg.plot <- plotFit(data.plot = du.df.sub,
                     fit.plot = est.jags$summary,
-					title = "Fitted Trend",
-                    y.lab = "Mature Individuals",
+					title = "Fitted Trend (Bayesian / JAGS)",
+                    y.lab = "Ln(Mature Individuals)",
                     exp.do = FALSE)
 
 print(gg.plot$plot)

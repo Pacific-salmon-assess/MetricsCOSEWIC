@@ -167,7 +167,7 @@ for(i in 1:dim(box.df)[2]){
 
 
 
-plotFit <- function(data.plot,fit.plot,title = "Fitted Trend",y.lab = "Abundance",exp.do = FALSE){
+plotFit <- function(data.plot,fit.plot,title = "Fitted Trend (Bayesian / JAGS)",y.lab = "Log(Mature Individuals)",exp.do = FALSE){
 # Using code from Ross Claytor
 
   plot.df <- data.frame(Year = data.plot$Year,
