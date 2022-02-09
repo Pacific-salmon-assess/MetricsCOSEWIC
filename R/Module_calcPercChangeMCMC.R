@@ -23,7 +23,9 @@
 calcPercChangeMCMC <-function(vec.in,method = "jags",model.in = NULL , perc.change.bm = -25 , na.skip = FALSE,
 							out.type = "short",
 							mcmc.plots = FALSE,
-							convergence.check = FALSE
+							convergence.check = FALSE,
+							priors = NULL,
+							mcmc.settings = NULL
 							){
 
   na.flag <- sum(is.na(vec.in)) > 0  & na.skip
@@ -47,19 +49,36 @@ if(is.null(model.in)){model.in <- trend.bugs.1}
 
 
 
+if(is.null(priors)){
+
+priors <- list( p_intercept = median(vec.in,na.rm=TRUE),
+                tau_intercept = (1/ max(vec.in,na.rm=TRUE))^2 ,
+                p_slope = 0,
+                tau_slope =  (1 / ( max(vec.in,na.rm=TRUE)/ max(yrs.in) ))^2
+)
+}
+
+
+if(is.null(mcmc.settings)){
+    mcmc.settings <- list(n.chains = 3, n.iter = 12000, n.burnin = 2000, n.thin = 10)
+
+  }
+
 
 	# for details on priors, see the wiki page at
 	# https://github.com/SOLV-Code/MetricsCOSEWIC/wiki/3-Priors-for-Bayesian-Slope-Estimates
 	data.in  <- list(Yr = yrs.in ,
 				Abd = vec.in,
 				N = length(yrs.in),
-				p_intercept = median(vec.in,na.rm=TRUE),
-				tau_intercept = (1/ max(vec.in,na.rm=TRUE))^2 ,
-				p_slope = 0,
-				tau_slope =  (1 / ( max(vec.in,na.rm=TRUE)/ max(yrs.in) ))^2
+				p_intercept = priors$p_intercept,
+				tau_intercept = priors$tau_intercept,
+				p_slope = priors$p_slope,
+				tau_slope =  priors$tau_slope
 			 )
 
-	#print(data.in)
+print("---------------------------------------")
+	    print(data.in)
+print("---------------------------------------")
 
 		# seems to work fine with auto-generated  inits, so don't bother with specific values or function
 		init.values <- NULL
@@ -78,7 +97,7 @@ if(is.null(model.in)){model.in <- trend.bugs.1}
 
 		fit_mcmc <- jags(data = data.in , inits = init.values,
 					parameters.to.save = params, model.file = model.in,
-					n.chains = 3, n.iter = 12000, n.burnin = 2000, n.thin = 10, DIC = F)
+					n.chains = mcmc.settings$n.chains, n.iter = mcmc.settings$n.iter, n.burnin = mcmc.settings$n.burnin, n.thin = mcmc.settings$n.thin, DIC = F)
 
 		mcmc.samples <- fit_mcmc$BUGSoutput$sims.matrix
 		mcmc.summary <- fit_mcmc$BUGSoutput$summary

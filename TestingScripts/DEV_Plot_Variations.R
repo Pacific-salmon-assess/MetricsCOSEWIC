@@ -111,6 +111,39 @@ est.jags$summary
 est.jags$slope.converged
 est.jags$samples
 
+
+# TRY CUStOM PRIORS AND MCMC SETTINGS
+
+vec.use <- log(test.df.sub$Spn)
+yrs.use <- 0:(length(vec.use)-1)
+
+est.jags2 <- calcPercChangeMCMC(vec.in = vec.use,
+                               method = "jags",
+                               model.in = NULL, # this defaults to the BUGS code in the built in function trend.bugs.1()
+                               perc.change.bm = -25,
+                               out.type = "long",
+                               mcmc.plots = FALSE,
+                               convergence.check = FALSE ,# ??Conv check crashes on ts() ???
+                               priors = list( p_intercept = median(vec.use,na.rm=TRUE),
+                                                 tau_intercept = (1/ max(vec.use,na.rm=TRUE))^2 ,
+                                                 p_slope = 0,
+                                                 tau_slope =  (1 / ( max(vec.use,na.rm=TRUE)/ max(yrs.use) ))^2
+                                 ),
+                                 mcmc.settings = list(n.chains = 3, n.iter = 120000, n.burnin = 20000, n.thin = 10)
+                          )
+
+
+est.jags2$pchange
+est.jags2$probdecl
+est.jags2$summary
+
+
+
+
+
+
+
+
 plotPattern(yrs = test.df$Year ,vals = log(test.df$Spn),
             width=1,color="darkblue",
             yrs.axis=TRUE,vals.axis=TRUE,
