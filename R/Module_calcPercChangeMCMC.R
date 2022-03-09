@@ -6,7 +6,7 @@
 #' @param vec.in vector with numeric values
 #' @param method either "jags" (default), "rstanarm", or "rstan". For properties and discussion of strengths/limitations, refer to the \href{https://github.com/SOLV-Code/MetricsCOSEWIC/wiki/1-Probability-of-Decline:-Estimation-Methods}{MetricsCOSEWIC wiki}.
 #' @param model.in if NULL, use the built in functions for each method: trend.bugs.1() for jags, ETC
-#' @param perc.change.bm  benchmark for Prob(Decl>BM), default = -25
+#' @param perc.change.bm  benchmark for Prob(Decl>BM), default = c(-30,-50,-70)
 #' @param na.skip  if TRUE, skip the calculations when vec.in contains any NA
 #' @param out.type  "short" or "long".
 #'    "short" gives summary table of posterior plus "PercChange" and "ProbDecl"
@@ -20,7 +20,7 @@
 #' @keywords MCMC, slope, trend
 #' @export
 
-calcPercChangeMCMC <-function(vec.in,method = "jags",model.in = NULL , perc.change.bm = -25 , na.skip = FALSE,
+calcPercChangeMCMC <-function(vec.in,method = "jags",model.in = NULL , perc.change.bm = c(-30,-50,-70) , na.skip = FALSE,
 							out.type = "short",
 							mcmc.plots = FALSE,
 							convergence.check = FALSE,
@@ -102,6 +102,8 @@ print("---------------------------------------")
 		mcmc.samples <- fit_mcmc$BUGSoutput$sims.matrix
 		mcmc.summary <- fit_mcmc$BUGSoutput$summary
 
+		print(names(mcmc.summary))
+
 
 		# add in % change
 		mcmc.samples <- cbind(mcmc.samples,Perc_Change = NA,Perc_Change_Raw = NA)
@@ -121,7 +123,18 @@ print("---------------------------------------")
 		#print(head(mcmc.summary))
 
 		pchange <- median(mcmc.samples[,"Perc_Change"])
-		probdecl <- sum(mcmc.samples[,"Perc_Change"] <= perc.change.bm) / dim(mcmc.samples)[1] *100
+
+		probdecl <- data.frame(BM = perc.change.bm,ProbDecl = NA )
+
+		print(probdecl)
+
+		for(i in 1:length(perc.change.bm)){
+
+		  probdecl[i,2] <- sum(mcmc.samples[,"Perc_Change"] <= perc.change.bm[i]) / dim(mcmc.samples)[1] *100
+
+		}
+
+		probdecl <- probdecl %>% arrange(BM)
 
 		pchange.raw <- median(mcmc.samples[,"Perc_Change_Raw"])
 		probdecl.raw <- NA #sum(mcmc.samples[,"Perc_Change_Raw"] <= perc.change.bm) / dim(mcmc.samples)[1] *100 need to convert BM
