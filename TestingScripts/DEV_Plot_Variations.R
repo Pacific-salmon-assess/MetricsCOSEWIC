@@ -100,7 +100,7 @@ est.simple
 est.jags <- calcPercChangeMCMC(vec.in = log(test.df.sub$Spn),
                    method = "jags",
                    model.in = NULL, # this defaults to the BUGS code in the built in function trend.bugs.1()
-                   perc.change.bm = -25,
+                   perc.change.bm = c(-30,-50,-70,-25),
                    out.type = "long",
                    mcmc.plots = FALSE,
                    convergence.check = FALSE# ??Conv check crashes on ts() ???
@@ -110,6 +110,20 @@ est.jags$probdecl
 est.jags$summary
 est.jags$slope.converged
 est.jags$samples
+
+
+
+
+plotDistribution(
+  x.lab = "Perc Change",
+  samples = list(Bayesian = est.jags$samples$Perc_Change ),
+  det.est = est.simple$pchange,
+  plot.range = c(-90,90) #NULL #c(-90,90)
+)
+
+
+
+
 
 
 # TRY CUStOM PRIORS AND MCMC SETTINGS
@@ -163,8 +177,8 @@ plotPattern(yrs = test.df.sub$Year ,vals = log(test.df.sub$Spn),
             width=1,color="darkblue",
             yrs.axis=TRUE,vals.axis=TRUE,
             #vals.lim=c(10,14),
-            hgrid=TRUE,vgrid=FALSE,
-            pch.val=19,pch.bg=NULL)
+            hgrid=TRUE,vgrid=FALSE, vlines = c(2010,2016),
+            pch.val=19,pch.bg=NULL,pch.cex = 2)
 #abline(v=c(calc.yr,calc.yr-yrs.window+1),col="red")
 
 addFit(data.df = test.df.sub, coeff = list(intercept = est.jags$summary["intercept","50%"],
@@ -190,5 +204,6 @@ test.exp <- plotFit(data.plot = test.df.sub,
                     ,title = "Fitted Trend",
                     y.lab = "Mature Individuals",
                     exp.do = TRUE)
+
 test.exp$data
 test.exp$plot

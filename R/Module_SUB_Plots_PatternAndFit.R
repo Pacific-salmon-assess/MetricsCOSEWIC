@@ -10,13 +10,15 @@
 #' @param vals.lim vector of length 2 with y-axis limits
 #' @param hgrid if TRUE, display horizontal grid lines. default is FALSE
 #' @param vgrid if TRUE, display vertical grid lines. default is FALSE
+#' @param vlines if not NULL, add red dashed vertical line (to show time window)
 #' @param pch.val numeric value for plotting character. default is 19 (solid pt)
 #' @param pch.bg  text string with color for point fill (if pch allows, e.g. 21)
+#' @param pch.cex numeric value for point size
 #' @export
 
 
 plotPattern <- function(yrs,vals,width=1,color="grey",yrs.axis=FALSE,vals.axis=FALSE,
-			vals.lim=NULL, hgrid=FALSE,vgrid=FALSE,pch.val=19,pch.bg=NULL){
+			vals.lim=NULL, hgrid=FALSE,vgrid=FALSE,vlines = NULL,pch.val=19,pch.bg=NULL,pch.cex =1){
 options(scipen=3)
 
 ##############################################################################
@@ -31,6 +33,9 @@ options(scipen=3)
 if(is.null(vals.lim)){vals.lim <- range(pretty(vals))}
 
 plot(yrs,vals,axes=FALSE,ylim=vals.lim,type="l",lwd=width,col=color,xlab="",ylab="")
+
+if(!is.null(vlines)){abline(v=vlines,col="red",lty=2,lwd=2)}
+
 
 if(yrs.axis==TRUE){axis(side=1,at=pretty(yrs),labels=pretty(yrs),cex.axis=1,lwd=0,lwd.tick=1)}
 
@@ -52,9 +57,9 @@ if(vgrid[1]!=FALSE){abline(v=vgrid,col="red",lty=2)	  }
 lines(yrs, vals,lwd=width,col=color) # replot line to "move it in front of hgrid and v grid
 
 # add a simple point with whichever symbol specified by pch.val
-if(is.null(pch.bg)){points(yrs, vals,col=color,pch=pch.val,cex=1)} # NEW LAYOUT: larger points
+if(is.null(pch.bg)){points(yrs, vals,col=color,pch=pch.val,cex = pch.cex)} # NEW LAYOUT: larger points
 # add a two-cloured point iv pch.bg is specified -> valid only for pch = 21-25
-if(!is.null(pch.bg)){points(yrs, vals,col=color,pch=pch.val,cex=1,bg=pch.bg)}
+if(!is.null(pch.bg)){points(yrs, vals,col=color,pch=pch.val,bg=pch.bg,cex = pch.cex)}
 
 }
 
@@ -93,7 +98,7 @@ segments(min(data.df$Year), coeff$intercept ,
 #' @export
 
 
-plotDistribution <- function(x.lab,samples,det.est = NULL, plot.range = NULL){
+plotDistribution <- function(x.lab,ref.lines = c(-70,-50,-30),samples,det.est = NULL, plot.range = NULL){
 
   num.samples <- length(names(samples))
 
@@ -113,11 +118,11 @@ plotDistribution <- function(x.lab,samples,det.est = NULL, plot.range = NULL){
   #if(num.samples < 4){legend("topright", legend = names(samples),bty="n",col=col.use,lwd=lwd.use,lty=lty.use)}
 
   if(!is.null(det.est)){ abline(v = det.est,col="darkblue",lty=2,lwd=2)
-				text(det.est,par("usr")[4],labels = "Det",,xpd=NA,adj = c(0.5,0),col="darkblue")
+				text(det.est,par("usr")[4],labels = "Det",xpd=NA,adj = c(0.5,0),col="darkblue")
 				}
 
-   abline(v = c(-70,-50,-30),col="red")
-    text(c(-70,-50,-30),par("usr")[4],labels = paste0(c(-70,-50,-30),"%"),xpd=NA,adj = c(0.5,-0.2),col="red")
+   abline(v = ref.lines,col="red")
+    text(ref.lines,par("usr")[4],labels = paste0(ref.lines,"%"),xpd=NA,adj = c(0.5,-0.2),col="red")
 
 
 
@@ -140,7 +145,7 @@ plotDistribution <- function(x.lab,samples,det.est = NULL, plot.range = NULL){
 #' @param plot.range numeric vector of length 2, specifying the plotting range for the variable.
 #' @export
 
-plotBoxes <- function(box.df, y.lab  = "Label", det.est = NULL, plot.range = NULL){
+plotBoxes <- function(box.df, y.lab  = "Label", ref.lines = c(-70,-50,-30),det.est = NULL, plot.range = NULL){
 
 
 num.boxes <- length(box.df)
@@ -152,8 +157,8 @@ axis(2,las=2)
 axis(1,at = 1:dim(box.df)[2], labels = names(box.df))
 
 
-   abline(h = c(-70,-50,-30),col="red")
-    text(par("usr")[2],c(-70,-50,-30),labels = paste0(c(-70,-50,-30),"%"),adj = c(1,0),col="red")#xpd=NA,
+   abline(h = ref.lines,col="red")
+    text(par("usr")[2],ref.lines,labels = paste0(ref.lines,"%"),adj = c(1,0),col="red")#xpd=NA,
 
 for(i in 1:dim(box.df)[2]){
 
