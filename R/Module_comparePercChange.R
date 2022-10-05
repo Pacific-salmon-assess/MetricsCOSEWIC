@@ -67,7 +67,7 @@ est.simple <- calcPercChangeSimple(log(du.df.sub[,2]))
 est.jags <- calcPercChangeMCMC(vec.in = log(du.df.sub[,2]),
                                method = "jags",
                                model.in = NULL, # this defaults to the BUGS code in the built in function trend.bugs.1()
-                               perc.change.bm = -25,
+                               perc.change.bm = c(-30,-50,-70),
                                out.type = "long",
                                mcmc.plots = FALSE,
                                convergence.check = FALSE# ??Conv check crashes on ts() ??? -> change to Rhat check
@@ -76,7 +76,7 @@ est.jags <- calcPercChangeMCMC(vec.in = log(du.df.sub[,2]),
 if(do.rstanarm) {est.rstanarm <- calcPercChangeMCMC(vec.in = log(du.df.sub[,2]),
                                    method = "rstanarm",
                                    model.in = NULL, # hardwired regression model form, so no input
-                                   perc.change.bm = -25,
+                                   perc.change.bm = c(-30,-50,-70),
                                    out.type = "long",
                                    mcmc.plots = FALSE,
                                    convergence.check = FALSE)   # NOT IMPLEMENTED YET
