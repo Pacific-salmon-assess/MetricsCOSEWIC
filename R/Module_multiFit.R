@@ -11,6 +11,7 @@ multiFit  <- function(data.df, window.df, plot.file =  "PercChange_Plots.pdf"){
 
 # set up empty data frame (as per https://stackoverflow.com/a/32342704)
 out.df <- data.frame() 
+prob.decl.df <- data.frame()
 
 # start the timer
 loop.start <- proc.time()
@@ -58,6 +59,8 @@ fit.out <- comparePercChange(du.label = du.do,
 
 out.df <- rbind(out.df, cbind(DU = du.do, Year = last.yr, rownames_to_column(as.data.frame(fit.out$Summary),"Var")))
 
+prob.decl.df <- rbind(prob.decl.df, cbind(DU = du.do, Year = last.yr, fit.out$ProbDecl))
+
 
 
 }} # end if have data
@@ -84,7 +87,7 @@ print("total time for this set of perc change calcs")
 print(proc.time() - loop.start )
 
 
-out.list <- list(Output = out.df, Summary = summary.out )
+out.list <- list(Output = out.df, Summary = summary.out,ProbDecl = prob.decl.df )
 
 
 return(out.list)

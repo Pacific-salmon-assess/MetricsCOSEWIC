@@ -126,7 +126,7 @@ print("---------------------------------------")
 
 		probdecl <- data.frame(BM = perc.change.bm,ProbDecl = NA )
 
-		print(probdecl)
+		#print(probdecl)
 
 		for(i in 1:length(perc.change.bm)){
 
@@ -135,6 +135,8 @@ print("---------------------------------------")
 		}
 
 		probdecl <- probdecl %>% arrange(BM)
+
+		#print(probdecl)
 
 		pchange.raw <- median(mcmc.samples[,"Perc_Change_Raw"])
 		probdecl.raw <- NA #sum(mcmc.samples[,"Perc_Change_Raw"] <= perc.change.bm) / dim(mcmc.samples)[1] *100 need to convert BM

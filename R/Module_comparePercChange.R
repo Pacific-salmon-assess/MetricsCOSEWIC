@@ -4,6 +4,7 @@
 #' @param du.label short label for the the Designatable Unit (DU)
 #' @param du.df data frame with the DU time series for : 2 columns, first one is "Year", second the abundance.
 #' @param yrs.window number of years to use for the percent change calculation (e.g. 3 gen +1)
+#' @param perc.change.bm  benchmark for Prob(Decl>BM), default = c(-30,-50,-70)
 #' @param calc.yr year for which the perc change is calculated
 #' @param samples.out if TRUE, include the posterior samples in the output
 #' @param plot.pattern if TRUE, create a plot of the time series with alternative slope estimates
@@ -12,7 +13,8 @@
 #' @export
 
 
-comparePercChange  <- function(du.label,du.df, yrs.window, calc.yr, samples.out = TRUE,
+comparePercChange  <- function(du.label,du.df, yrs.window, 
+perc.change.bm = c(-30,-50,-70), calc.yr, samples.out = TRUE,
 plot.pattern = TRUE, plot.fitted = TRUE, plot.posteriors = TRUE, plot.boxes  = TRUE,  do.rstanarm = FALSE){
 
 #warning("NOTE: input time series is log-transformed before slope calc, but Perc Change estimate is backtransformed")
@@ -43,19 +45,24 @@ percentile.labels <- c("p2.5","p25","Med","p75","p97.5","Rhat")
 extract.labels <- c("2.5%","25%","50%","75%","97.5%","Rhat")
 
 if(do.rstanarm) {
-out.mat <- matrix(NA,ncol = 4, nrow=13,
+out.mat <- matrix(NA,ncol = 3, nrow=13,
                         dimnames = list(c("MLE",paste("Jags",percentile.labels,sep="_"),
 													paste("RStanArm",percentile.labels,sep="_")),
-                                      c("pchange","probdecl","slope","intercept"))
+                                      c("pchange","slope","intercept"))
                             )
 }
 
 if(!do.rstanarm) {
-out.mat <- matrix(NA,ncol = 4, nrow=7,
+out.mat <- matrix(NA,ncol = 3, nrow=7,
                         dimnames = list(c("MLE",paste("Jags",percentile.labels,sep="_")),
-                                      c("pchange","probdecl","slope","intercept"))
+                                      c("pchange","slope","intercept"))
                             )
 }
+
+
+
+out.probdecl <- data.frame(BM = perc.change.bm, ProbDecl = NA)
+
 
 
 
@@ -67,7 +74,7 @@ est.simple <- calcPercChangeSimple(log(du.df.sub[,2]))
 est.jags <- calcPercChangeMCMC(vec.in = log(du.df.sub[,2]),
                                method = "jags",
                                model.in = NULL, # this defaults to the BUGS code in the built in function trend.bugs.1()
-                               perc.change.bm = c(-30,-50,-70),
+                               perc.change.bm = perc.change.bm,
                                out.type = "long",
                                mcmc.plots = FALSE,
                                convergence.check = FALSE# ??Conv check crashes on ts() ??? -> change to Rhat check
@@ -76,7 +83,7 @@ est.jags <- calcPercChangeMCMC(vec.in = log(du.df.sub[,2]),
 if(do.rstanarm) {est.rstanarm <- calcPercChangeMCMC(vec.in = log(du.df.sub[,2]),
                                    method = "rstanarm",
                                    model.in = NULL, # hardwired regression model form, so no input
-                                   perc.change.bm = c(-30,-50,-70),
+                                   perc.change.bm = perc.change.bm,
                                    out.type = "long",
                                    mcmc.plots = FALSE,
                                    convergence.check = FALSE)   # NOT IMPLEMENTED YET
@@ -85,19 +92,14 @@ if(!do.rstanarm){est.rstanarm <- NULL}
 
 
 
-
-
-
-
-
-
-out.mat["MLE",] <-round(c(est.simple$pchange,NA,est.simple$slope,est.simple$intercept),5)
+out.mat["MLE",] <-round(c(est.simple$pchange,est.simple$slope,est.simple$intercept),5)
 
 
 out.mat[grepl("Jags",dimnames(out.mat)[[1]]),"slope"] <- round(est.jags$summary["slope",extract.labels],5)
 out.mat[grepl("Jags",dimnames(out.mat)[[1]]),"intercept"] <- round(est.jags$summary["intercept",extract.labels],5)
 out.mat[grepl("Jags",dimnames(out.mat)[[1]]),"pchange"] <- c(quantile(est.jags$samples$Perc_Change,probs = percentile.values),NA)
-out.mat["Jags_Med","probdecl"] <- round(est.jags$probdecl,5)
+
+out.probdecl <- round(est.jags$probdecl,5)
 
 if(do.rstanarm) {
 
@@ -105,7 +107,8 @@ out.mat[grepl("RStanArm",dimnames(out.mat)[[1]]),"slope"] <- unlist(round(est.rs
 out.mat[grepl("RStanArm",dimnames(out.mat)[[1]]),"intercept"] <- unlist(round(est.rstanarm$summary["intercept",extract.labels],5))
 
 out.mat[grepl("RStanArm",dimnames(out.mat)[[1]]),"pchange"] <- c(quantile(est.rstanarm$samples$Perc_Change,probs = percentile.values),NA)
-out.mat["RStanArm_Med","probdecl"] <- round(est.rstanarm$probdecl,5)
+
+out.probdecl <- round(rstanarm$probdecl,5)
 
 }
 
@@ -211,7 +214,10 @@ print(gg.plot$plot)
 
 
 
-out.list <- list(Summary = out.mat)
+
+
+
+out.list <- list(Summary = out.mat,ProbDecl = out.probdecl)
 
 if(samples.out & !na.skip){  out.list <- c(out.list, samples = list(rstanarm = est.rstanarm$samples, jags = est.jags$samples)) }
 if(samples.out & na.skip){  out.list <- c(out.list, samples = list(rstanarm = NA, jags = NA)) }

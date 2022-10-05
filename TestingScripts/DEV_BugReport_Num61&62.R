@@ -40,14 +40,16 @@ est.jags <- calcPercChangeMCMC(vec.in = log(test.df.sub$Spn),
                                model.in = NULL, # this defaults to the BUGS code in the built in function trend.bugs.1()
                                perc.change.bm = c(-30,-50,-70),
                                out.type = "long",
-                               mcmc.plots = TRUE,
+                               mcmc.plots = FALSE,
                                convergence.check = FALSE# ??Conv check crashes on ts() ???
                               )
 
+est.jags
+
+est.jags$probdecl
+
 
 # testing the "compare" function
-
-
 
 comparePercChange(du.label = "DU 1",
                   du.df = test.data,
@@ -61,13 +63,25 @@ comparePercChange(du.label = "DU 1",
 
 
 
-#################
-# test multifit
+####################################
+# test multifit on a dummy data set
 
 multi.out <- multiFit(data.df = test.data, window.df = test.data.window, plot.file = paste0(folder.path,"/TestSummaryPlots.pdf"))
 
+multi.out
 
 
+######################################
+# test multifit on a real data set
 
+data.in <- SR_Sample %>% select(Stock,Year,Spn) %>% rename(DU=Stock,Abd = Spn)
+head(data.in)
 
+#write.csv(data.in,"tmp.csv")
+
+window.in <- data.frame(DU = unique(data.in$DU),Window = 13)
+
+multi.out.sr <- multiFit(data.df = data.in, window.df = window.in, plot.file =  "testing_output/Test_SRData_PercChange_Plots.pdf")
+
+multi.out.sr
 
