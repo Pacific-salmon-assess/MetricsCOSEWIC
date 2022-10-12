@@ -13,7 +13,7 @@
 #' @export
 
 
-comparePercChange  <- function(du.label,du.df, yrs.window, 
+comparePercChange  <- function(du.label,du.df, yrs.window,
 perc.change.bm = c(-30,-50,-70), calc.yr, samples.out = TRUE,
 plot.pattern = TRUE, plot.fitted = TRUE, plot.posteriors = TRUE, plot.boxes  = TRUE,  do.rstanarm = FALSE){
 
@@ -36,8 +36,8 @@ du.df.sub[zero.idx,2] <- runif(sum(zero.idx,na.rm = TRUE),0.00000001, min(du.df.
 
 # if too many NA, then things can go haywire in the MCMC.
 # -> Need at least half the data points before trying MCMC
-if(sum(!is.na(du.df.sub[,2])) < length(du.df.sub[,2]/2) ){na.skip <- TRUE} # this results in NA outputs, but stops crashing
-if(sum(!is.na(du.df.sub[,2])) >= length(du.df.sub[,2]/2) ){na.skip <- FALSE}
+if(sum(!is.na(du.df.sub[,2])) < length(du.df.sub[,2])/2 ){na.skip <- TRUE} # this results in NA outputs, but stops crashing
+if(sum(!is.na(du.df.sub[,2])) >= length(du.df.sub[,2])/2 ){na.skip <- FALSE}
 
 
 percentile.values <- c(0.025,0.25,0.5,0.75,0.975)
