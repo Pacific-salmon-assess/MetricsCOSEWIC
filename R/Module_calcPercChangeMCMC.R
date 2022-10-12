@@ -246,7 +246,30 @@ print("---------------------------------------")
     # should do the same for summary table
 
     pchange <- median(mcmc.samples[,"Perc_Change"])
-    probdecl <- sum(mcmc.samples[,"Perc_Change"] <= perc.change.bm) / dim(mcmc.samples)[1] *100
+
+  # New code
+    probdecl <- data.frame(BM = perc.change.bm,ProbDecl = NA )
+
+    #print(probdecl)
+
+    for(i in 1:length(perc.change.bm)){
+
+      probdecl[i,2] <- sum(mcmc.samples[,"Perc_Change"] <= perc.change.bm[i]) / dim(mcmc.samples)[1] *100
+
+    }
+
+    probdecl <- probdecl %>% arrange(BM)
+
+    #print(probdecl)
+
+    pchange.raw <- median(mcmc.samples[,"Perc_Change_Raw"])
+    probdecl.raw <- NA #sum(mcmc.samples[,"Perc_Change_Raw"] <= perc.change.bm) / dim(mcmc.samples)[1] *100 need to convert BM
+
+    coda.obj1 <- as.mcmc(fit_mcmc$BUGSoutput$sims.matrix)
+    coda.obj2 <- as.mcmc(fit_mcmc) # need this alt version for the gelman plot (this one is by chain)
+
+    # Old code replaced with above
+    #probdecl <- sum(mcmc.samples[,"Perc_Change"] <= perc.change.bm) / dim(mcmc.samples)[1] *100
 
     pchange.raw <- median(mcmc.samples[,"Perc_Change_Raw"])
     probdecl.raw <- NA #sum(mcmc.samples[,"Perc_Change_Raw"] <= perc.change.bm) / dim(mcmc.samples)[1] *100 need to convert BM
