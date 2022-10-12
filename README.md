@@ -106,6 +106,8 @@ head(test.df)
 test.df.sub <- test.df %>% dplyr::filter(Year > calc.yr - yrs.do )
 test.df.sub
 
+# Added NA for testing: test.df$Spen[50] <- NA
+
 fit.out <- comparePercChange(du.label = stk,
                              du.df = test.df,
                              yrs.window = yrs.do ,
