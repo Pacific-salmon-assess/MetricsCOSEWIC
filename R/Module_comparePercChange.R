@@ -108,7 +108,7 @@ out.mat[grepl("RStanArm",dimnames(out.mat)[[1]]),"intercept"] <- unlist(round(es
 
 out.mat[grepl("RStanArm",dimnames(out.mat)[[1]]),"pchange"] <- c(quantile(est.rstanarm$samples$Perc_Change,probs = percentile.values),NA)
 
-out.probdecl <- round(rstanarm$probdecl,5)
+out.probdecl <- round(est.rstanarm$probdecl,5)
 
 }
 
