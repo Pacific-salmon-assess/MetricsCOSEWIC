@@ -60,7 +60,7 @@ priors <- list( p_intercept = median(vec.in,na.rm=TRUE),
 
 
 if(is.null(mcmc.settings)){
-    mcmc.settings <- list(n.chains = 3, n.iter = 12000, n.burnin = 2000, n.thin = 10)
+    mcmc.settings <- list(n.chains = 6, n.iter = 10000, n.burnin = 5000, n.thin = 10)
 
   }
 
