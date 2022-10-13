@@ -17,6 +17,7 @@ library(MetricsCOSEWIC)
 test.data <- data.frame(cbind(rep(1,26), seq(1990,2015), rnorm(26,1000,100)))
 colnames(test.data) <- c("DU", "Year", "Abd")
 test.data$Abd[c(2,8,9,10,11)] <- NA
+#test.data$Abd[c(12,18,19,20,21)] <- NA
 
 head(test.data)
 unique(test.data$DU)
@@ -52,7 +53,7 @@ est.jags$probdecl
 # testing the "compare" function
 
 comparePercChange(du.label = "DU 1",
-                  du.df = test.data,
+                  du.df = test.data %>% select(Year, Abd),
                   yrs.window = 15,
                   calc.yr = last.yr,
                   samples.out = FALSE,
