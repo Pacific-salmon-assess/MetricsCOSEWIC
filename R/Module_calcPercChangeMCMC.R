@@ -265,8 +265,6 @@ print("---------------------------------------")
     pchange.raw <- median(mcmc.samples[,"Perc_Change_Raw"])
     probdecl.raw <- NA #sum(mcmc.samples[,"Perc_Change_Raw"] <= perc.change.bm) / dim(mcmc.samples)[1] *100 need to convert BM
 
-    coda.obj1 <- as.mcmc(fit_mcmc$BUGSoutput$sims.matrix)
-    coda.obj2 <- as.mcmc(fit_mcmc) # need this alt version for the gelman plot (this one is by chain)
 
     # Old code replaced with above
     #probdecl <- sum(mcmc.samples[,"Perc_Change"] <= perc.change.bm) / dim(mcmc.samples)[1] *100
