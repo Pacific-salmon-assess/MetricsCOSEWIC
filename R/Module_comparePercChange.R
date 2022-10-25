@@ -108,7 +108,7 @@ out.mat[grepl("RStanArm",dimnames(out.mat)[[1]]),"intercept"] <- unlist(round(es
 
 out.mat[grepl("RStanArm",dimnames(out.mat)[[1]]),"pchange"] <- c(quantile(est.rstanarm$samples$Perc_Change,probs = percentile.values),NA)
 
-out.probdecl <- round(est.rstanarm$probdecl,5)
+out.probdecl.rstanarm <- round(est.rstanarm$probdecl,5)
 
 }
 
@@ -214,10 +214,10 @@ print(gg.plot$plot)
 
 
 
+if(!do.rstanarm) out.list <- list(Summary = out.mat, ProbDecl = out.probdecl)
+if(do.rstanarm) out.list <- list(Summary = out.mat, ProbDecl = out.probdecl,
+                                 Probdecl.rstan = out.probdecl.rstanarm)
 
-
-
-out.list <- list(Summary = out.mat,ProbDecl = out.probdecl)
 
 if(samples.out & !na.skip){  out.list <- c(out.list, samples = list(rstanarm = est.rstanarm$samples, jags = est.jags$samples)) }
 if(samples.out & na.skip){  out.list <- c(out.list, samples = list(rstanarm = NA, jags = NA)) }
