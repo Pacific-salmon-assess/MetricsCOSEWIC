@@ -15,12 +15,12 @@
 
 comparePercChange  <- function(du.label,du.df, yrs.window,
 perc.change.bm = c(-30,-50,-70), calc.yr, samples.out = TRUE,
-plot.pattern = TRUE, plot.fitted = TRUE, plot.posteriors = TRUE, plot.boxes  = TRUE,  do.rstanarm = FALSE){
+plot.pattern = TRUE, plot.fitted = TRUE, plot.posteriors = TRUE, plot.boxes  = TRUE,  do.rstanarm = FALSE, print.mcmc = TRUE){
 
 #warning("NOTE: input time series is log-transformed before slope calc, but Perc Change estimate is backtransformed")
 
 du.df.sub <- du.df %>% dplyr::filter(Year > calc.yr - yrs.window, Year <= calc.yr)
-du.df.sub
+#du.df.sub
 
 # If any zeroes in the data, then the log-transform below causes problems
 # using the strategy from Perry et al 2021 (https://journals.plos.org/plosone/article/comments?id=10.1371/journal.pone.0245941)
@@ -77,8 +77,9 @@ est.jags <- calcPercChangeMCMC(vec.in = log(du.df.sub[,2]),
                                perc.change.bm = perc.change.bm,
                                out.type = "long",
                                mcmc.plots = FALSE,
-                               convergence.check = FALSE# ??Conv check crashes on ts() ??? -> change to Rhat check
-                                )
+                               convergence.check = FALSE,# ??Conv check crashes on ts() ??? -> change to Rhat check
+                               print.mcmc = print.mcmc
+                               )
 
 if(do.rstanarm) {est.rstanarm <- calcPercChangeMCMC(vec.in = log(du.df.sub[,2]),
                                    method = "rstanarm",
@@ -86,7 +87,8 @@ if(do.rstanarm) {est.rstanarm <- calcPercChangeMCMC(vec.in = log(du.df.sub[,2]),
                                    perc.change.bm = perc.change.bm,
                                    out.type = "long",
                                    mcmc.plots = FALSE,
-                                   convergence.check = FALSE)   # NOT IMPLEMENTED YET
+                                   convergence.check = FALSE,
+                                   print.mcmc = print.mcmc)
 								   }
 if(!do.rstanarm){est.rstanarm <- NULL}
 

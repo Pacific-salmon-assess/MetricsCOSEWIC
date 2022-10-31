@@ -25,7 +25,8 @@ calcPercChangeMCMC <-function(vec.in,method = "jags",model.in = NULL , perc.chan
 							mcmc.plots = FALSE,
 							convergence.check = FALSE,
 							priors = NULL,
-							mcmc.settings = NULL
+							mcmc.settings = NULL,
+							print.mcmc = TRUE
 							){
 
   na.flag <- sum(is.na(vec.in)) > 0  & na.skip
@@ -75,10 +76,11 @@ if(is.null(mcmc.settings)){
 				p_slope = priors$p_slope,
 				tau_slope =  priors$tau_slope
 			 )
-
-print("---------------------------------------")
-	    print(data.in)
-print("---------------------------------------")
+if(print.mcmc){
+  print("---------------------------------------")
+  print(data.in)
+  print("---------------------------------------")
+}
 
 		# seems to work fine with auto-generated  inits, so don't bother with specific values or function
 		init.values <- NULL
@@ -94,15 +96,26 @@ print("---------------------------------------")
 
 
 		params <- c("intercept", "slope", "sigma", "Fit_Start", "Fit_End")
+    if(print.mcmc){
+      n.refresh = mcmc.settings$n.chains/50
+      is.quiet = FALSE
+      type.progressbar = "text"} # Default in R2Jags
+		if(!print.mcmc){
+		  n.refresh = 0
+		  is.quiet = TRUE
+		  type.progressbar = "none"}
 
 		fit_mcmc <- jags(data = data.in , inits = init.values,
 					parameters.to.save = params, model.file = model.in,
-					n.chains = mcmc.settings$n.chains, n.iter = mcmc.settings$n.iter, n.burnin = mcmc.settings$n.burnin, n.thin = mcmc.settings$n.thin, DIC = F)
+					n.chains = mcmc.settings$n.chains, n.iter = mcmc.settings$n.iter,
+					n.burnin = mcmc.settings$n.burnin, n.thin = mcmc.settings$n.thin,
+					DIC = F, refresh = n.refresh, quiet = is.quiet,
+					progress.bar = type.progressbar)
 
 		mcmc.samples <- fit_mcmc$BUGSoutput$sims.matrix
 		mcmc.summary <- fit_mcmc$BUGSoutput$summary
 
-		print(names(mcmc.summary))
+		if(print.mcmc) print(names(mcmc.summary))
 
 
 		# add in % change
@@ -208,9 +221,17 @@ print("---------------------------------------")
     stan.in <- data.frame(Year = yrs.in,Val = vec.in)
 
 
-    fit.stan <- stan_lm(Val ~ Year, data = stan.in,
-                        prior = NULL, # use DEFAULT
-                        seed = 12345)
+    if(print.mcmc) {
+      fit.stan <- stan_lm(Val ~ Year, data = stan.in,
+                          prior = NULL, # use DEFAULT
+                          seed = 12345)
+    }
+
+    if(!print.mcmc) {
+      fit.stan <- stan_lm(Val ~ Year, data = stan.in,
+                          prior = NULL, # use DEFAULT
+                          seed = 12345, refresh = 0)
+    }
 
     # info on extracting: https://cran.r-project.org/web/packages/rstan/vignettes/stanfit-objects.html
     mcmc.samples <- as.data.frame(fit.stan$stanfit)
@@ -218,8 +239,8 @@ print("---------------------------------------")
     mcmc.summary <- as.data.frame(fit.stan$stan_summary)
     row.names(mcmc.summary)[1:2] <- c("intercept","slope")
 
-    print(head(mcmc.samples))
-    print(head(mcmc.summary))
+    if(print.mcmc) print(head(mcmc.samples))
+    if(print.mcmc) print(head(mcmc.summary))
 
 
     # for consistency with jags output
@@ -227,7 +248,7 @@ print("---------------------------------------")
                      mutate(Fit_Start = intercept) %>%
                      mutate(Fit_End = intercept + slope * length(fit.stan$fitted.values))
 
-    print(head(mcmc.samples))
+    if(print.mcmc) print(head(mcmc.samples))
 
     # add in % change
     mcmc.samples <- cbind(mcmc.samples,Perc_Change = NA,Perc_Change_Raw = NA)
