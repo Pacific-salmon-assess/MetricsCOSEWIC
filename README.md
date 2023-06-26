@@ -46,7 +46,7 @@ Then you can install this package directly from github, using the following code
 ```
 install.packages("devtools") # Install the devtools package
 library(devtools) # Load the devtools package.
-install_github("SOLV-Code/MetricsCOSEWIC", dependencies = TRUE, build_vignettes = FALSE)
+install_github("Pacific-salmon-assess/MetricsCOSEWIC", dependencies = TRUE, build_vignettes = FALSE)
 library(MetricsCOSEWIC)				
 ```
 
