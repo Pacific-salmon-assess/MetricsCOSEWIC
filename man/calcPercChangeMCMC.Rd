@@ -8,11 +8,14 @@ calcPercChangeMCMC(
   vec.in,
   method = "jags",
   model.in = NULL,
-  perc.change.bm = -25,
+  perc.change.bm = c(-30, -50, -70),
   na.skip = FALSE,
   out.type = "short",
   mcmc.plots = FALSE,
-  convergence.check = FALSE
+  convergence.check = FALSE,
+  priors = NULL,
+  mcmc.settings = NULL,
+  print.mcmc = TRUE
 )
 }
 \arguments{
@@ -22,7 +25,7 @@ calcPercChangeMCMC(
 
 \item{model.in}{if NULL, use the built in functions for each method: trend.bugs.1() for jags, ETC}
 
-\item{perc.change.bm}{benchmark for Prob(Decl>BM), default = -25}
+\item{perc.change.bm}{benchmark for Prob(Decl>BM), default = c(-30,-50,-70)}
 
 \item{na.skip}{if TRUE, skip the calculations when vec.in contains any NA}
 

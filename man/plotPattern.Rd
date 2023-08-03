@@ -14,8 +14,10 @@ plotPattern(
   vals.lim = NULL,
   hgrid = FALSE,
   vgrid = FALSE,
+  vlines = NULL,
   pch.val = 19,
-  pch.bg = NULL
+  pch.bg = NULL,
+  pch.cex = 1
 )
 }
 \arguments{
@@ -37,9 +39,13 @@ plotPattern(
 
 \item{vgrid}{if TRUE, display vertical grid lines. default is FALSE}
 
+\item{vlines}{if not NULL, add red dashed vertical line (to show time window)}
+
 \item{pch.val}{numeric value for plotting character. default is 19 (solid pt)}
 
 \item{pch.bg}{text string with color for point fill (if pch allows, e.g. 21)}
+
+\item{pch.cex}{numeric value for point size}
 }
 \description{
 Function to plot time series pattern with minimal labels

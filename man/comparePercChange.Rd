@@ -8,11 +8,15 @@ comparePercChange(
   du.label,
   du.df,
   yrs.window,
+  perc.change.bm = c(-30, -50, -70),
   calc.yr,
   samples.out = TRUE,
   plot.pattern = TRUE,
+  plot.fitted = TRUE,
   plot.posteriors = TRUE,
-  plot.boxes = TRUE
+  plot.boxes = TRUE,
+  do.rstanarm = FALSE,
+  print.mcmc = TRUE
 )
 }
 \arguments{
@@ -21,6 +25,8 @@ comparePercChange(
 \item{du.df}{data frame with the DU time series for : 2 columns, first one is "Year", second the abundance.}
 
 \item{yrs.window}{number of years to use for the percent change calculation (e.g. 3 gen +1)}
+
+\item{perc.change.bm}{benchmark for Prob(Decl>BM), default = c(-30,-50,-70)}
 
 \item{calc.yr}{year for which the perc change is calculated}
 

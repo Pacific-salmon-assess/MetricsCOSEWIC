@@ -9,6 +9,4 @@ License: GNU GENERAL PUBLIC LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: dplyr, tibble, R2jags, coda, rstanarm, rstan, Rcpp, shiny, shinystan
-RoxygenNote: 7.1.1
-
-
+RoxygenNote: 7.2.3

@@ -4,7 +4,13 @@
 \alias{plotDistribution}
 \title{plotDistribution}
 \usage{
-plotDistribution(x.lab, samples, ref.lines, plot.range = NULL)
+plotDistribution(
+  x.lab,
+  ref.lines = c(-70, -50, -30),
+  samples,
+  det.est = NULL,
+  plot.range = NULL
+)
 }
 \arguments{
 \item{x.lab}{named list, each element is one set of MCMC sample}

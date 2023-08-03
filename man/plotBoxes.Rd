@@ -7,7 +7,8 @@
 plotBoxes(
   box.df,
   y.lab = "Label",
-  ref.lines = list(BM = -25),
+  ref.lines = c(-70, -50, -30),
+  det.est = NULL,
   plot.range = NULL
 )
 }
