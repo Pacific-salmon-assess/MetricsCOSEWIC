@@ -14,7 +14,17 @@ library(bridgesampling)
 library(forcats)
 
 # rstan setup
+  # DOUBLE CHECK WHAT RSTAN VERSION IS RUNNING
+  # You may need to follow:
+    # RStan and Rtool compatibility issues:
+    # Requires restarting R for this case
+    # https://github.com/stan-dev/rstan/wiki/Configuring-C---Toolchain-for-Windows
+    # install.packages("StanHeaders", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
+    # install.packages("rstan", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
+# library(StanHeaders)
+# packageVersion("rstan") # 2.26.22 is the correct version according to the MetricsCOSEWIC-stan repo
 library(rstan) # for the old stan version
+  # currently running tools 4.2.2
 
 # cmdstanr setup
 # install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
@@ -30,15 +40,18 @@ library(posterior)
 # install_github("Pacific-salmon-assess/MetricsCOSEWIC", dependencies = TRUE,
 #                build_vignettes = FALSE) # If not already installed
 library(MetricsCOSEWIC)
-source("R/runStan.R")
-
+source(here::here("R/runStan.R")) # is this right?
+# Replace with here::here syntax
+# Testing
+# # script.dir <- dirname(sys.frame(1)$ofile)
+# rstudioapi::getActiveDocumentContext()$path
 
 #### Read in Data ####
 
 data <- read.csv(here::here("COSEWIC_WorkedExamples/MarineFish/Sebastes", "Sebastes_SampleData.csv"))
 data.long <- data
 
-stk <- "SebastesA"
+stk <- "SebastesA" # The name of the DU in question
 gen <- 3
 scenario.name <- "long-time-series" #"short-time-series"
 
@@ -79,24 +92,33 @@ if(scenario.name == "long-time-series"){
 
 # ERRORS
   # *year.scale not found* - FIXED
-  # linear-exp errors regarding variable's not existing
+  # linear-exp errors regarding variable's not existing - FIXED
 
-# Original: stanr
+# Original command line: stanr
+  # Now will include both stanr model and cmdstanr model outputs
+  # See stan.out$cmdstan for cmdstanr model raw output
+
 # Run STAN with standardized data, exp prior on var, and 2.5 sigma priors on
-# slope and yi (DEFAULT)
-stan.out.or <- run.stan(du.label=stk, du.df=du.df, yrs.window=yrs.window,
+  # slope and yi (DEFAULT)
+stan.out <- run.stan(du.label=stk, du.df=du.df, yrs.window=yrs.window,
                      standardize.data = TRUE,
                      scenario.name = scenario.name,
                      prior_sigma_type = "exp")
+# Just double check the fit.obj is present in the stan.out list (S4 object)
 
-out.df <- data.frame(Value=stan.out$samples$Perc_Change, PriorSigma=2.5,
-                     std.data=1, VarPrior="Exp")
+# Original command for df creation from stanr
+# out.df <- data.frame(Value=stan.out$samples$Perc_Change, PriorSigma=2.5,
+#                      std.data=1, VarPrior="Exp")
 
-# New: cmdstanr
-stan.out.nu <- run.stan(du.label=stk, du.df=du.df, yrs.window=yrs.window,
-                        standardize.data = TRUE,
-                        scenario.name = scenario.name,
-                        prior_sigma_type = "exp")
+# New: cmdstanr # Not currently in use
+  # cmdstanr inputs should be included in stan.out currently
+# stan.nu <- run.stan(du.label=stk, du.df=du.df, yrs.window=yrs.window,
+#                         standardize.data = TRUE,
+#                         scenario.name = scenario.name,
+#                         prior_sigma_type = "exp")
 
 
 #### Explore Stan and cmdstanr Outputs ####
+
+# Tor: This is space any testing of the outputs.
+

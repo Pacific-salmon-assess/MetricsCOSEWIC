@@ -8,3 +8,13 @@
 
 
 testing_output
+SebastesA/long-time-series/convergenceRhat.csv
+SebastesA/long-time-series/intercept_posterior.pdf
+SebastesA/long-time-series/mcmc_samples.csv
+SebastesA/long-time-series/posterior_predictive_check.pdf
+SebastesA/long-time-series/posterior_predictive_check.png
+SebastesA/long-time-series/prior_predictive_check.pdf
+SebastesA/long-time-series/prior_predictive_check.png
+SebastesA/long-time-series/prob_declines.pdf
+SebastesA/long-time-series/slope_posterior.pdf
+SebastesA/long-time-series/trace_plot.pdf
