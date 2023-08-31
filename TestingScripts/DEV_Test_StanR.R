@@ -40,7 +40,7 @@ library(posterior)
 # install_github("Pacific-salmon-assess/MetricsCOSEWIC", dependencies = TRUE,
 #                build_vignettes = FALSE) # If not already installed
 library(MetricsCOSEWIC)
-source(here::here("R/runStan.R")) # is this right?
+# source(here::here("R/runStan.R")) # is this right?
 # Replace with here::here syntax
 # Testing
 # # script.dir <- dirname(sys.frame(1)$ofile)

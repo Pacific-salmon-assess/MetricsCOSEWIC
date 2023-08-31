@@ -270,17 +270,20 @@ run.stan <- function(du.label,
   # **** These outputs MUST be changed to match the above changes with
   # cmdstanr ****
 
+  # Sections:
+    # - converged slope where rhat is < 1.02
+    # - slope, intercept, and sigma
+    # - Summary of fit
+    # - Log Abundance of Fits, Predicted, Prior Predictions
+    # - Log marginal likelihood
+    # - Posteriors
+      # - Used to calculate percent changes for visualization
+
   # The new model is now named: "fit_sample"
     # Should be able to find and replace "stan_fit" or "fit_sample"
     # bayesplot should understand the difference directly between the two
     # only 3 changes need to be made in the following lines, then
     # it is transferred into All_Ests
-
-
-
-# COMMENTED OUT EVERYTHING BELOW THIS
-
-
 
   slope.converged <- bayesplot::rhat(stan_fit)["slope"] < 1.02
     # change stan_fit to fit_sample
@@ -498,9 +501,15 @@ run.stan <- function(du.label,
     # if(out.type=="short"){ out.list <- list(pchange = pchange,probdecl = probdecl, summary = mcmc.summary,
     #                                         slope.converged = slope.converged, conv.details = conv.out)}
     #
-    out.list <- list(pchange = pchange,probdecl = probdecl, summary = mcmc.summary,
-                     slope.converged = slope.converged, conv.details = conv.out,
-                     samples = mcmc.samples, fit.obj = stan_fit, logML = logML, cmdstan = fit_sample)
+    out.list <- list(pchange = pchange,
+                     probdecl = probdecl,
+                     summary = mcmc.summary,
+                     slope.converged = slope.converged,
+                     conv.details = conv.out,
+                     samples = mcmc.samples,
+                     fit.obj = stan_fit,
+                     logML = logML,
+                     cmdstan = fit_sample)
 
   }# End of if (!H0)
 
