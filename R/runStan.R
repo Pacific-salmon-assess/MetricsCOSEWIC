@@ -196,68 +196,72 @@ run.stan <- function(du.label,
 
 # BEGIN NEW CODE
     # Error: no files found using system.file
-  if(prior_sigma_type=="exp"){
-    if(!H0) mod <- cmdstanr::cmdstan_model(
-        stan_file = here::here('MetricsCOSEWIC/inst/stan/linear-exp.stan')
-         # stan_file = system.file(
-         #   "stan","linear-exp",
-         #   package = "MetricsCOSEWIC",
-         #   mustWork = TRUE
-         # ),
-        ,
-         include_path = system.file(
-           "stan",
-           package = "MetricsCOSEWIC",
-           mustWork = TRUE
-         )
-       )
+  # Commented out for the moment bug-fixing
+  # if(prior_sigma_type=="exp"){
+  #   if(!H0) mod <- cmdstanr::cmdstan_model(
+  #       stan_file = here::here('MetricsCOSEWIC/inst/stan/linear-exp.stan')
+  #        # stan_file = system.file(
+  #        #   "stan","linear-exp",
+  #        #   package = "MetricsCOSEWIC",
+  #        #   mustWork = TRUE
+  #        # ),
+  #       ,
+  #        include_path = system.file(
+  #          "stan",
+  #          package = "MetricsCOSEWIC",
+  #          mustWork = TRUE
+  #        )
+  #      )
 
-    if(H0) mod <- cmdstanr::cmdstan_model(
-      stan_file = here::here('MetricsCOSEWIC/inst/stan/linear-exp-H0.stan')
-      # stan_file = system.file(
-      #   "stan","linear-exp-H0",
-      #   package = "MetricsCOSEWIC",
-      #   mustWork = TRUE
-      # )
-      ,
-      include_path = system.file(
-        "stan",
-        package = "MetricsCOSEWIC",
-        mustWork = TRUE
-      )
-    )
-  }
+  # Commented out for the moment bug-fixing
+  #   if(H0) mod <- cmdstanr::cmdstan_model(
+  #     stan_file = here::here('MetricsCOSEWIC/inst/stan/linear-exp-H0.stan')
+  #     # stan_file = system.file(
+  #     #   "stan","linear-exp-H0",
+  #     #   package = "MetricsCOSEWIC",
+  #     #   mustWork = TRUE
+  #     # )
+  #     ,
+  #     include_path = system.file(
+  #       "stan",
+  #       package = "MetricsCOSEWIC",
+  #       mustWork = TRUE
+  #     )
+  #   )
+  # }
 
-  if(prior_sigma_type=="invgamma"){
-    mod <- cmdstanr::cmdstan_model(
-      stan_file = here::here('MetricsCOSEWIC/inst/stan/linear-invgamma.stan')
-      # stan_file = system.file(
-      #   "stan","linear-invgamma",
-      #   package = "MetricsCOSEWIC",
-      #   mustWork = TRUE
-      # )
-      ,
-      include_path = system.file(
-        "stan",
-        package = "MetricsCOSEWIC",
-        mustWork = TRUE
-      )
-    )
-  }
+  # Commented out for the moment bug-fixing
+  # if(prior_sigma_type=="invgamma"){
+  #   mod <- cmdstanr::cmdstan_model(
+  #     stan_file = here::here('MetricsCOSEWIC/inst/stan/linear-invgamma.stan')
+  #     # stan_file = system.file(
+  #     #   "stan","linear-invgamma",
+  #     #   package = "MetricsCOSEWIC",
+  #     #   mustWork = TRUE
+  #     # )
+  #     ,
+  #     include_path = system.file(
+  #       "stan",
+  #       package = "MetricsCOSEWIC",
+  #       mustWork = TRUE
+  #     )
+  #   )
+  # }
   #
   # #### Model Sampling/Optimization ####
   # # Where can I put in the model parameters e.g. iterations, chains, thins, etc.
   # # Consider making these separate objects prior to optimization?
 
   # Fit with sampling function (MCMC)
-  fit_sample <- mod$sample(
-    data = data,
-    refresh = 0,
-    iter_sampling = 10000, # might need to be changed to iter_warmup or iter_sampling
-    chains = 4,
-    thin = 10,
-    adapt_delta = 0.95# control
-  )
+  # Commented out while bug fixing
+  # fit_sample <- mod$sample(
+  #   data = data,
+  #   refresh = 0,
+  #   iter_sampling = 10000, # might need to be changed to iter_warmup or iter_sampling
+  #   chains = 4,
+  #   thin = 10,
+  #   adapt_delta = 0.95# control
+  # )
 
 # END NEW CODE
 
