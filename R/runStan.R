@@ -131,16 +131,16 @@ run.stan <- function(du.label,
   # Included original stan model code for comparison during testing
 
   if(prior_sigma_type=="exp"){
-    if(!H0) stan_fit <- stan(file = 'inst/stan/linear-exp.stan', data = data,
+    if(!H0) stan_fit <- stan(file = 'MetricsCOSEWIC/inst/stan/linear-exp.stan', data = data,
                              iter = 10000, chains = 4, thin =10,
                              control = list(adapt_delta = 0.95), refresh = 0)
-    if(H0) stan_fit <- stan(file = 'inst/stan/linear-exp-H0.stan', data = data,
+    if(H0) stan_fit <- stan(file = 'MetricsCOSEWIC/inst/stan/linear-exp-H0.stan', data = data,
                             iter = 10000, chains = 4, thin =10,
                             control = list(adapt_delta = 0.95), refresh = 0)
   }
 
   if(prior_sigma_type=="invgamma"){
-    stan_fit <- stan(file = 'inst/stan/linear-invgamma.stan', data = data, iter = 10000,
+    stan_fit <- stan(file = 'MetricsCOSEWIC/inst/stan/linear-invgamma.stan', data = data, iter = 10000,
                      chains = 4, thin =10,  control = list(adapt_delta = 0.95),
                      refresh = 0)
   }
@@ -175,7 +175,7 @@ run.stan <- function(du.label,
     # Error: no files found using system.file
   if(prior_sigma_type=="exp"){
     if(!H0) mod <- cmdstanr::cmdstan_model(
-        stan_file = here::here('inst/stan/linear-exp.stan')
+        stan_file = here::here('MetricsCOSEWIC/inst/stan/linear-exp.stan')
          # stan_file = system.file(
          #   "stan","linear-exp",
          #   package = "MetricsCOSEWIC",
@@ -190,7 +190,7 @@ run.stan <- function(du.label,
        )
 
     if(H0) mod <- cmdstanr::cmdstan_model(
-      stan_file = here::here('inst/stan/linear-exp-H0.stan')
+      stan_file = here::here('MetricsCOSEWIC/inst/stan/linear-exp-H0.stan')
       # stan_file = system.file(
       #   "stan","linear-exp-H0",
       #   package = "MetricsCOSEWIC",
@@ -207,7 +207,7 @@ run.stan <- function(du.label,
 
   if(prior_sigma_type=="invgamma"){
     mod <- cmdstanr::cmdstan_model(
-      stan_file = here::here('inst/stan/linear-invgamma.stan')
+      stan_file = here::here('MetricsCOSEWIC/inst/stan/linear-invgamma.stan')
       # stan_file = system.file(
       #   "stan","linear-invgamma",
       #   package = "MetricsCOSEWIC",
