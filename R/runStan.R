@@ -130,19 +130,42 @@ run.stan <- function(du.label,
   #### Original stan code model
   # Included original stan model code for comparison during testing
 
+  # Original
+  # if(prior_sigma_type=="exp"){
+  #   if(!H0) stan_fit <- stan(file = 'MetricsCOSEWIC/inst/stan/linear-exp.stan', data = data,
+  #                            iter = 10000, chains = 4, thin =10,
+  #                            control = list(adapt_delta = 0.95), refresh = 0)
+  #   if(H0) stan_fit <- stan(file = 'MetricsCOSEWIC/inst/stan/linear-exp-H0.stan', data = data,
+  #                           iter = 10000, chains = 4, thin =10,
+  #                           control = list(adapt_delta = 0.95), refresh = 0)
+  # }
+
+  # system.file attempt
   if(prior_sigma_type=="exp"){
-    if(!H0) stan_fit <- stan(file = 'MetricsCOSEWIC/inst/stan/linear-exp.stan', data = data,
-                             iter = 10000, chains = 4, thin =10,
-                             control = list(adapt_delta = 0.95), refresh = 0)
-    if(H0) stan_fit <- stan(file = 'MetricsCOSEWIC/inst/stan/linear-exp-H0.stan', data = data,
-                            iter = 10000, chains = 4, thin =10,
-                            control = list(adapt_delta = 0.95), refresh = 0)
+    stan_file <- if (H0) {
+      system.file('stan/linear-exp-H0.stan', package = "MetricsCOSEWIC")
+    } else {
+      system.file('stan/linear-exp.stan', package = "MetricsCOSEWIC")
+    }
+
+    stan_fit <- stan(file = stan_file, data = data,
+                      iter = 10000, chains = 4, thin =10,
+                      control = list(adapt_delta = 0.95), refresh = 0)
   }
 
+  # Original
+  # if(prior_sigma_type=="invgamma"){
+  #   stan_fit <- stan(file = 'MetricsCOSEWIC/inst/stan/linear-invgamma.stan', data = data, iter = 10000,
+  #                    chains = 4, thin =10,  control = list(adapt_delta = 0.95),
+  #                    refresh = 0)
+  # }
+
+  # system.file attempt
   if(prior_sigma_type=="invgamma"){
-    stan_fit <- stan(file = 'MetricsCOSEWIC/inst/stan/linear-invgamma.stan', data = data, iter = 10000,
-                     chains = 4, thin =10,  control = list(adapt_delta = 0.95),
-                     refresh = 0)
+    stan_file <- system.file('stan/linear-invgamma.stan', package = "MetricsCOSEWIC")
+    stan_fit <- stan(file = stan_file, data = data, iter = 10000,
+                      chains = 4, thin =10,  control = list(adapt_delta = 0.95),
+                      refresh = 0)
   }
 
   #### Create stan model object ####
