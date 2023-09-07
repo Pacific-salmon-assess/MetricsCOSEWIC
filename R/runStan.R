@@ -2,19 +2,24 @@
 #' Created by: Carrie Holt
 #' params list for function params
 #' @param du.label [character()] # pathing for the project, used through here::here
-#' @param du.df [data.frame()] input data
+#' @param du.df [data.frame()] # input data
+#'  # Abd is supplied as raw will be required to be converted into logAbd
+#'  # Columns required by title:
+#'    # 'Year', 'Abd', 'logAbd', 'DU'
 
 #' @param yrs.window [numeric()] [vector()] # ? - guessing at from Larkin
 #' @param perc.change.bm [character()] [vector()] # ? - guessing at from Larkin
 
 #' @param calc.yr [numeric()]
+#'
 #' @param standardize.data [logical()]
-#' @param scenario.name [character()]
-#' @param path.results [character()]
+#' @param scenario.name [character()] # for creating the scenario outputs folder
 #' @param mcmc.plots [logical()]
 #' @param prior_sigma_type [character()]
 #' @param prior_sigma [numeric()]
 #' @param H0 [logical()]
+
+#' @param path.results [character()] # NO LONGER USED
 
 #' @importFrom rlang .data
 #' @importFrom rlang :=
@@ -24,12 +29,13 @@
 
 run.stan <- function(du.label,
                      du.df,
-                     yrs.window,
+                     yrs.window, # *Tor*: should this have a default?
                      perc.change.bm = c(-30,-50,-70),
-                     calc.yr,
+                     # calc.yr, # *Tor*: can this be set to NULL?
+                      # calc.yr doesn't appear elsewhere in the function
                      standardize.data = TRUE,
-                     scenario.name = "test",
-                     path.results="",
+                     scenario.name = "untitled_scenario", # filler title
+                     # path.results="", # NO LONGER USED
                      mcmc.plots = TRUE,
                      prior_sigma_type = "exp",
                      prior_sigma=2.5,
@@ -41,6 +47,23 @@ run.stan <- function(du.label,
 {
 
   year.scale <- FALSE #standardize x-axis (years) as well. This is not needed
+
+
+  #### Data checks and Testing ####
+  if (!"logAbd" %in% colnames(du.df)) {
+    stop("Error: 'logAbd' column not found in the data frame. Please ensure
+         your data includes: 'Year', 'DU', and 'logAbd'.")
+  }
+
+  if (!"Year" %in% colnames(du.df)) {
+    stop("Error: 'Year' column not found in the data frame.Please ensure
+         your data includes: 'Year', 'DU', and 'logAbd'.")
+  }
+
+  if (!"DU" %in% colnames(du.df)) {
+    stop("Error: 'DU' column not found in the data frame.Please ensure
+         your data includes: 'Year', 'DU', and 'logAbd'.")
+  }
 
   #### Create folder for outputs ####
   out.dir.stock <- here::here(du.label)
@@ -56,6 +79,12 @@ run.stan <- function(du.label,
   }
 
   #### Standardize log(Abundance) data ####
+
+  # *Tor*: consider adding a function to do the logAbd transformation for the
+    # user. For e.g,
+  # if (raw==TRUE) {
+  #   du.df <- du.df %>% mutate(logAbd = log(Abd)) # base 10 or nat?
+  # }
 
   if (standardize.data){
     du.df.raw <- du.df# Save raw values
@@ -535,8 +564,9 @@ run.stan <- function(du.label,
                      conv.details = conv.out,
                      samples = mcmc.samples,
                      fit.obj = stan_fit,
-                     logML = logML,
-                     cmdstan = fit_sample)
+                     logML = logML# ,
+                     # cmdstan = fit_sample)
+    )
 
   }# End of if (!H0)
 

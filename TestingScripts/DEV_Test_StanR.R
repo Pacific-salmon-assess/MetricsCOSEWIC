@@ -48,28 +48,24 @@ library(MetricsCOSEWIC)
 
 #### Read in Data ####
 
+# Bare minimums - runStan will run with just these
 data <- read.csv(here::here("COSEWIC_WorkedExamples/MarineFish/Sebastes", "Sebastes_SampleData.csv"))
-data.long <- data
-
-stk <- "SebastesA" # The name of the DU in question
+du.df <- data
+du.df <- du.df %>% mutate(logAbd=log(Abd))
+stk <- "SebastesA" # The name of the DU in question - only used for labeling
+du.df <- du.df %>% filter(DU==stk) # For filtering just one DU out of a larger set
+# scenario.name <- "long-time-series" #"short-time-series"
+scenario.name <- "bug-test"
+# Required for computation
 gen <- 3
-scenario.name <- "long-time-series" #"short-time-series"
+yrs.window <- (3 * gen) + 1 # *TOR*: Do we want separation of generations and year windows?
 
-# Unknown code:
-# if (!file.exists(here::here(eval(stk))))  dir.create(here::here(eval(stk)))
-#
-# if (file.exists(here::here(eval(stk)))){
-#   if (!file.exists(here::here(eval(stk), "long-time-series"))) {
-#     dir.create(here::here(eval(stk), "long-times-eries"))
-#   }
-#   if (!file.exists(here::here(eval(stk), "short-time-series"))) {
-#     dir.create(here::here(eval(stk), "short-times-eries"))
-#   }
-# }
 
-# other
-yrs.window <- (3 * gen) + 1
-calc.year <- 2021
+
+# Optional inputs - currently under testing as to their necessity
+du.df.long <- du.df # reset for following
+
+# *TOR*: Can runStan handle multiple DU's at one time?
 du.df.long <- data.long %>% filter(DU==stk)
 
 # Arithmetic smooth time-series (as in 2017 COSEWIC report on Fr sockeye)
@@ -77,13 +73,13 @@ du.df.long$Abd <- smoothSeries(du.df.long$Abd, gen=gen, filter.sides=1,
                                log.transform = FALSE, out.exp = FALSE,
                                na.rm=FALSE)
 
-du.df.long <- du.df.long %>% mutate(logAbd=log(Abd))
-
 # Shorten data set to years used to estimate trends
+calc.year <- 2021
 if(scenario.name == "short-time-series"){
   du.df <- du.df.long %>% filter(Year > (calc.year - yrs.window) &
                                    Year <= calc.year)
 }
+
 if(scenario.name == "long-time-series"){
   du.df <- du.df.long
 }
@@ -100,7 +96,9 @@ if(scenario.name == "long-time-series"){
 
 # Run STAN with standardized data, exp prior on var, and 2.5 sigma priors on
   # slope and yi (DEFAULT)
-stan.out <- run.stan(du.label=stk, du.df=du.df, yrs.window=yrs.window,
+stan.out <- run.stan(du.label=stk,
+                     du.df=du.df,
+                     yrs.window=yrs.window,
                      standardize.data = TRUE,
                      scenario.name = scenario.name,
                      prior_sigma_type = "exp")

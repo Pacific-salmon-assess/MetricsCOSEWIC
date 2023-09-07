@@ -18,3 +18,13 @@ SebastesA/long-time-series/prior_predictive_check.png
 SebastesA/long-time-series/prob_declines.pdf
 SebastesA/long-time-series/slope_posterior.pdf
 SebastesA/long-time-series/trace_plot.pdf
+SebastesA/bug-test/convergenceRhat.csv
+SebastesA/bug-test/intercept_posterior.pdf
+SebastesA/bug-test/mcmc_samples.csv
+SebastesA/bug-test/posterior_predictive_check.pdf
+SebastesA/bug-test/posterior_predictive_check.png
+SebastesA/bug-test/prior_predictive_check.pdf
+SebastesA/bug-test/prior_predictive_check.png
+SebastesA/bug-test/prob_declines.pdf
+SebastesA/bug-test/slope_posterior.pdf
+SebastesA/bug-test/trace_plot.pdf
