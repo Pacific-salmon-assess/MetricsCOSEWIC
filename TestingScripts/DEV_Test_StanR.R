@@ -11,7 +11,7 @@ library(RColorBrewer)
 library(gridExtra)
 #library(shinystan)
 library(bridgesampling)
-library(forcats)
+#library(forcats)
 
 # rstan setup
   # DOUBLE CHECK WHAT RSTAN VERSION IS RUNNING
@@ -51,14 +51,14 @@ library(MetricsCOSEWIC)
 # Bare minimums - runStan will run with just these
 data <- read.csv(here::here("COSEWIC_WorkedExamples/MarineFish/Sebastes", "Sebastes_SampleData.csv"))
 du.df <- data
-du.df <- du.df %>% mutate(logAbd=log(Abd))
+# du.df <- du.df %>% mutate(logAbd=log(Abd))
 stk <- "SebastesA" # The name of the DU in question - only used for labeling
 du.df <- du.df %>% filter(DU==stk) # For filtering just one DU out of a larger set
 # scenario.name <- "long-time-series" #"short-time-series"
 scenario.name <- "bug-test"
 # Required for computation
-gen <- 3
-yrs.window <- (3 * gen) + 1 # *TOR*: Do we want separation of generations and year windows?
+# gen <- 3
+# yrs.window <- (3 * gen) + 1 # *TOR*: Do we want separation of generations and year windows?
 
 
 

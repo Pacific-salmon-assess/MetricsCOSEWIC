@@ -52,17 +52,17 @@ run.stan <- function(du.label,
 
   year.scale <- FALSE #standardize x-axis (years) as well. This is not needed
 
-
-
   #### Data checks and Testing ####
 
   # Function to do the logAbd transformation for the
   # user. Keep in mind, log() R defaults to nat log (e)
+  # consider adding a default function that if logAbd is not detected then run
   if (raw==TRUE) {
-    du.df <- du.df %>% mutate(logAbd = log(Abd)) # base 10 or nat?
+    du.df <- du.df %>% mutate(logAbd = log(Abd))
   }
 
   if (!"logAbd" %in% colnames(du.df)) {
+    # du.df <- du.df %>% mutate(logAbd = log(Abd))
     stop("Error: 'logAbd' column not found in the data frame. Please set 'raw = TRUE' and/or ensure
          your data includes: 'Year', 'DU', and 'logAbd'.")
   }
