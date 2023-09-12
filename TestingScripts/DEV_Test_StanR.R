@@ -98,7 +98,8 @@ if(scenario.name == "long-time-series"){
   # slope and yi (DEFAULT)
 stan.out <- run.stan(du.label=stk,
                      du.df=du.df,
-                     yrs.window=yrs.window,
+                     raw=TRUE,
+                     # yrs.window=yrs.window,
                      standardize.data = TRUE,
                      scenario.name = scenario.name,
                      prior_sigma_type = "exp")

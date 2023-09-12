@@ -29,7 +29,11 @@
 
 run.stan <- function(du.label,
                      du.df,
-                     yrs.window, # *Tor*: should this have a default?
+                     raw = FALSE,
+                     gen = 3, # default 3 generations
+                     yrs.window = (3 * gen) + 1, # default equation using gen
+                     # gen = 3, # default?
+                     # yrs.window = (3 * gen) + 1, # default?
                      perc.change.bm = c(-30,-50,-70),
                      # calc.yr, # *Tor*: can this be set to NULL?
                       # calc.yr doesn't appear elsewhere in the function
@@ -49,9 +53,17 @@ run.stan <- function(du.label,
   year.scale <- FALSE #standardize x-axis (years) as well. This is not needed
 
 
+
   #### Data checks and Testing ####
+
+  # Function to do the logAbd transformation for the
+  # user. Keep in mind, log() R defaults to nat log (e)
+  if (raw==TRUE) {
+    du.df <- du.df %>% mutate(logAbd = log(Abd)) # base 10 or nat?
+  }
+
   if (!"logAbd" %in% colnames(du.df)) {
-    stop("Error: 'logAbd' column not found in the data frame. Please ensure
+    stop("Error: 'logAbd' column not found in the data frame. Please set 'raw = TRUE' and/or ensure
          your data includes: 'Year', 'DU', and 'logAbd'.")
   }
 
@@ -78,13 +90,7 @@ run.stan <- function(du.label,
     dir.create(out.dir)
   }
 
-  #### Standardize log(Abundance) data ####
-
-  # *Tor*: consider adding a function to do the logAbd transformation for the
-    # user. For e.g,
-  # if (raw==TRUE) {
-  #   du.df <- du.df %>% mutate(logAbd = log(Abd)) # base 10 or nat?
-  # }
+  #### Standardize data ####
 
   if (standardize.data){
     du.df.raw <- du.df# Save raw values
