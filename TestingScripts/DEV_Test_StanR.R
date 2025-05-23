@@ -40,6 +40,7 @@ library(posterior)
 # install_github("Pacific-salmon-assess/MetricsCOSEWIC", dependencies = TRUE,
 #                build_vignettes = FALSE) # If not already installed
 library(MetricsCOSEWIC)
+
 # source(here::here("R/runStan.R")) # is this right?
 # Replace with here::here syntax
 # Testing
@@ -66,7 +67,7 @@ scenario.name <- "bug-test"
 du.df.long <- du.df # reset for following
 
 # *TOR*: Can runStan handle multiple DU's at one time?
-du.df.long <- data.long %>% filter(DU==stk)
+du.df.long <- data.long %>% filter(DU == stk)
 
 # Arithmetic smooth time-series (as in 2017 COSEWIC report on Fr sockeye)
 du.df.long$Abd <- smoothSeries(du.df.long$Abd, gen=gen, filter.sides=1,
