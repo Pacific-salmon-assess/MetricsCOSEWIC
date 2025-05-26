@@ -28,6 +28,7 @@ library(cmdstanr)
 library(bayesplot)
 library(posterior)
 library(MetricsCOSEWIC)
+# source(here::here("R/Module_SUB_Plots_patternAndFit.R")) 
 source(here::here("R/runStan.R"))
 ```
 
@@ -73,6 +74,11 @@ stan.out <- run.stan(du.label = stk,
                      scenario.name = scenario.name,
                      prior_sigma_type = "exp")
 ```
+```{r trace plots, echo=FALSE, warning=FALSE, message=FALSE}
+# trace plots
+# stan.out$fit.obj
+rstan::traceplot(stan.out$fit.obj, pars = c("intercept", "slope", "sigma"))
+```
 
 run.stan output plots 
 
@@ -95,28 +101,18 @@ run.stan output plots
 # test.df
 # test.df.sub
 
-# plotPattern(yrs = test.df$Year, vals = log(test.df$Spn),
-#             width = 1, color = "darkblue",
-#             yrs.axis = TRUE, vals.axis = TRUE,
-#             #vals.lim=c(10,14),
-#             hgrid = TRUE, vgrid = FALSE,
-#             pch.val = 19, pch.bg = NULL)
-# 
-# addFit(data.df = test.df.sub, coeff = list(intercept = stan.out$summary["intercept","summary.50."],
-#                                        slope = stan.out$summary["slope","summary.50."] )
-# )
-# 
-# 
-# plotPattern(yrs = test.df.sub$Year, vals = log(test.df.sub$Spn),
-#             width = 1, color = "darkblue",
-#             yrs.axis = TRUE, vals.axis = TRUE,
-#             #vals.lim=c(10,14),
-#             hgrid = TRUE, vgrid = FALSE,
-#             pch.val = 19, pch.bg = NULL)
-# 
-# addFit(data.df = test.df.sub, coeff = list(intercept = stan.out$summary["intercept","summary.50."],
-#                                            slope = vstan.out$summary["slope","summary.50."] )
-# )
+# standardize = TRUE
+
+plotPattern(yrs = du.df$Year, vals = (log(du.df$Abd) - mean(log(du.df$Abd)))/sd(log(du.df$Abd)),
+            width = 1, color = "darkblue",
+            yrs.axis = TRUE, vals.axis = TRUE,
+            #vals.lim=c(10,14),
+            hgrid = TRUE, vgrid = FALSE,
+            pch.val = 19, pch.bg = NULL)
+
+addFit(data.df = du.df, coeff = list(intercept = stan.out$summary["intercept","summary.50."],
+                                       slope = stan.out$summary["slope","summary.50."] )
+)
 ```
 
 ## JAGS through Module_calcPercChangeMCMC.R
@@ -180,13 +176,14 @@ est.jags <- calcPercChangeMCMC(vec.in = log(test.df.sub$Spn),
                    perc.change.bm = -25,
                    out.type = "long",
                    mcmc.plots = FALSE,
-                   convergence.check = FALSE# ??Conv check crashes on ts() ???
+                   convergence.check = FALSE # ??Conv check crashes on ts() ???
                    )
-est.jags$pchange
-est.jags$probdecl
-est.jags$summary
-est.jags$slope.converged
-est.jags$samples
+
+# est.jags$pchange
+# est.jags$probdecl
+# est.jags$summary
+# est.jags$slope.converged
+# est.jags$samples
 
 plotPattern(yrs = test.df$Year ,vals = log(test.df$Spn),
             width=1,color="darkblue",

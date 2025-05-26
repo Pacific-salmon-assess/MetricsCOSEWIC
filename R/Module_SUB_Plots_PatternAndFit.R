@@ -37,11 +37,11 @@ plot(yrs,vals,axes=FALSE,ylim=vals.lim,type="l",lwd=width,col=color,xlab="",ylab
 if(!is.null(vlines)){abline(v=vlines,col="red",lty=2,lwd=2)}
 
 
-if(yrs.axis==TRUE){axis(side=1,at=pretty(yrs),labels=pretty(yrs),cex.axis=1,lwd=0,lwd.tick=1)}
+if(yrs.axis==TRUE){axis(side=1,at=pretty(yrs),labels=pretty(yrs),cex.axis=1,lwd=0,lwd.ticks=1)}
 
 if(vals.axis==TRUE){
 
-	axis(side=2,at=pretty(vals.lim),labels=NA,cex.axis=1,lwd=0,lwd.tick=1,xpd=NA)
+	axis(side=2,at=pretty(vals.lim),labels=NA,cex.axis=1,lwd=0,lwd.ticks=1,xpd=NA)
 	y.labels<-pretty(vals.lim)
 	yrs.range <- max(yrs)-min(yrs)
 	text(rep(min(yrs)-(yrs.range*0.065),length(y.labels)),y.labels,labels=prettyNum(y.labels,big.mark=","),xpd=NA,cex=1,adj=1)
@@ -75,13 +75,13 @@ if(!is.null(pch.bg)){points(yrs, vals,col=color,pch=pch.val,bg=pch.bg,cex = pch.
 #' @export
 
 
-addFit <- function(data.df, coeff,col = "red",lwd = 2,lty=1){
+addFit <- function(data.df, coeff, col = "red", lwd = 2, lty = 1){
 #
 # To Do: add bounds for MCMC versions
 
 segments(min(data.df$Year), coeff$intercept ,
-         max(data.df$Year), coeff$intercept + length(data.df$Year) * coeff$slope , col=col,lwd=lwd,lty=lty)
-
+         max(data.df$Year), coeff$intercept + length(data.df$Year) * coeff$slope,
+         col = col, lwd = lwd, lty = lty)
 
 }
 
